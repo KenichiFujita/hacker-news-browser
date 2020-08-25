@@ -8,22 +8,54 @@
 
 import Foundation
 
-public struct Item: Decodable {
+enum StoryQueryType: String {
+    case top
+    case ask
+    case show
+}
+
+private enum API {
+    case getItem(Int)
+    case ids(StoryQueryType)
+    case searchStories(String)
+    case comment(Int)
     
-    public let id: Int?
-    let deleted: Bool?
-    public let by: String?
-    public let date: Date
-    let text: String?
-    let dead: Bool?
-    let parent: Int?
-    let poll: Int?
-    public let kids: [Int]?
-    public let url: String?
-    public let score: Int?
-    public let title: String?
-    let parts: [Int]?
-    public let descendants: Int?
+    fileprivate var url: URL? {
+        switch self {
+        case .getItem(let id):
+            return URL(string: "https://hacker-news.firebaseio.com/v0/item/\(id).json")
+        case .ids(let queryType):
+            return URL(string: "https://hacker-news.firebaseio.com/v0/\(queryType.rawValue)stories.json")
+        case .searchStories(let searchText):
+            return URL(string: "http://hn.algolia.com/api/v1/search?query=\(searchText)&tags=story")
+        case .comment(let id):
+            return URL(string: "http://hn.algolia.com/api/v1/items/\(id)")
+        }
+    }
+}
+
+enum APIClientError: Error {
+    case invalidURL
+    case domainError
+    case decodingError
+    case unkonwnError
+}
+
+private struct Item: Decodable {
+    fileprivate let id: Int?
+    private let deleted: Bool?
+    fileprivate let by: String?
+    fileprivate let date: Date
+    fileprivate let text: String?
+    private let dead: Bool?
+    private let parent: Int?
+    private let poll: Int?
+    fileprivate let kids: [Int]?
+    fileprivate let url: String?
+    fileprivate let score: Int?
+    fileprivate let title: String?
+    private let parts: [Int]?
+    fileprivate let descendants: Int?
     
     private enum CodingKeys: String, CodingKey {
         case date = "time"
@@ -33,9 +65,9 @@ public struct Item: Decodable {
         case text
         case dead
         case parent
-        case poll 
+        case poll
         case kids
-        case url 
+        case url
         case score
         case title
         case parts
@@ -43,18 +75,17 @@ public struct Item: Decodable {
     }
 }
 
-public struct Story {
-    
-    public let by: String
-    public let descendants: Int
-    public let id: Int
-    public var commentIDs: [Int]? = nil
-    public let score: Int
-    public let date: Date
-    public let title: String
-    public let url: String?
-    public let text: String?
-    public var type: StoryType {
+struct Story: Equatable {
+    let by: String
+    let descendants: Int
+    let id: Int
+    var commentIDs: [Int]? = nil
+    let score: Int
+    let date: Date
+    let title: String
+    let url: String?
+    let text: String?
+    var type: StoryType {
         if title.hasPrefix("Show HN:") {
             return .show
         } else if title.hasPrefix("Ask HN:") || url == nil {
@@ -63,11 +94,11 @@ public struct Story {
             return .normal
         }
     }
-    public var info: String {
+    var info: String {
         ["\(score) points", by, date.postTimeAgo].compactMap { $0 }.joined(separator: " · ")
     }
     
-    public init(_ item: Item) {
+    fileprivate init(_ item: Item) {
         self.by = item.by ?? ""
         self.descendants = item.descendants ?? 0
         self.id = item.id ?? 0
@@ -80,29 +111,28 @@ public struct Story {
     }
 }
 
-public enum StoryType: String {
+enum StoryType: String {
     case ask
     case show
     case normal
 }
 
-public struct Comment {
-    public let by: String?
-    public let deleted: Bool
-    public let id: Int
-    public let commentIDs: [Int]?
-    public var comments: [Comment] = []
-    public let parent: Int
-    public var text: String?
-    public let date: Date
-    public let tier: Int
-    public var info: String {
+struct Comment {
+    let by: String?
+    let deleted: Bool
+    let id: Int
+    let commentIDs: [Int]?
+    var comments: [Comment] = []
+    let parent: Int
+    var text: String?
+    let date: Date
+    let tier: Int
+    var info: String {
         [by, date.postTimeAgo].compactMap { $0 }.joined(separator: " · ")
     }
 }
 
 extension Comment {
-    
     public var flatten: [Comment] {
         var array: [Comment] = [self]
         for comment in comments {
@@ -110,33 +140,32 @@ extension Comment {
         }
         return array
     }
-    
 }
 
 
-public enum StoryQueryType: String {
-    case top
-    case ask
-    case show
+class APIClient {
     
-}
-
-public class APIClient {
-    
-    private let session = URLSession(configuration: .default, delegate: nil, delegateQueue: .main)
+    private var session: URLSession
     private var hackerNewsSearchTask: URLSessionTask?
     
-    public init() {}
+    init(session: URLSession = URLSession(configuration: .default, delegate: nil, delegateQueue: .main)) {
+        self.session = session
+    }
     
-    public func getItem(id: Int, completionHandler: @escaping (Result<Item, APIClientError>) -> Void) {
-        guard let itemUrl = URL(string: "https://hacker-news.firebaseio.com/v0/item/\(id).json") else {
+    private func getItem(id: Int, completionHandler: @escaping (Result<Item, APIClientError>) -> Void) {
+        guard let itemUrl = API.getItem(id).url else {
             completionHandler(.failure(.invalidURL))
             return
         }
         session.dataTask(with: itemUrl) { data, response, error in
             guard let data = data else {
-                completionHandler(.failure(.domainError))
-                return
+                if let _ = error {
+                    completionHandler(.failure(.domainError))
+                    return
+                } else {
+                    completionHandler(.failure(.unkonwnError))
+                    return
+                }
             }
             do {
                 let item = try JSONDecoder.hackerNews.decode(Item.self, from: data)
@@ -148,7 +177,8 @@ public class APIClient {
         }.resume()
     }
     
-    public func stories(for ids: [Int], completionHandler: @escaping ([Story]) -> Void) {
+    func stories(for ids: [Int], completionHandler: @escaping ([Story]) -> Void) {
+        var returningIDs = ids
         var stories: [Int: Story] = [:]
         if ids.count == 0 {
             completionHandler([])
@@ -156,26 +186,36 @@ public class APIClient {
         }
         for id in ids {
             self.getItem(id: id) { (result) in
-                if case .success(let item) = result {
+                switch result {
+                case .success(let item):
                     let story: Story = Story(item)
                     stories[id] = story
-                    if stories.count == ids.count {
-                        completionHandler(ids.compactMap { stories[$0] })
+                case .failure(_):
+                    if let indexToRemove = returningIDs.firstIndex(of: id) {
+                        returningIDs.remove(at: indexToRemove)
                     }
+                }
+                if stories.count == returningIDs.count {
+                    completionHandler(ids.compactMap { stories[$0] })
                 }
             }
         }
     }
     
-    public func ids(for type: StoryQueryType, completionHandler: @escaping (Result<[Int], APIClientError>) -> Void) {
-        guard let url: URL = URL(string: "https://hacker-news.firebaseio.com/v0/\(type.rawValue)stories.json") else {
+    func ids(for type: StoryQueryType, completionHandler: @escaping (Result<[Int], APIClientError>) -> Void) {
+        guard let url = API.ids(type).url else {
             completionHandler(.failure(.invalidURL))
             return
         }
         session.dataTask(with: url) { data, response, error in
             guard let data = data else {
-                completionHandler(.failure(.domainError))
-                return
+                if let _ = error {
+                    completionHandler(.failure(.domainError))
+                    return
+                } else {
+                    completionHandler(.failure(.unkonwnError))
+                    return
+                }
             }
             do {
                 let json = try JSONSerialization.jsonObject(with: data, options: [])
@@ -243,21 +283,16 @@ private struct HNSComment: Codable {
     }
 }
 
-public enum APIClientError: Error {
-    case invalidURL
-    case domainError
-    case decodingError
-}
 
 extension APIClient {
 
-    public func searchStories(searchWord: String, completionHandler: @escaping (Result<[Story], APIClientError>) -> Void) {
+    func searchStories(searchText: String, completionHandler: @escaping (Result<[Story], APIClientError>) -> Void) {
         hackerNewsSearchTask?.cancel()
-        guard searchWord != "" else {
+        guard searchText != "" else {
             completionHandler(.success([]))
             return
         }
-        guard let url: URL = URL(string: "http://hn.algolia.com/api/v1/search?query=\(searchWord)&tags=story") else {
+        guard let url: URL = API.searchStories(searchText).url else {
             completionHandler(.failure(.invalidURL))
             return
         }
@@ -278,8 +313,8 @@ extension APIClient {
         hackerNewsSearchTask?.resume()
     }
     
-    public func comment(id: Int, completionHandler: @escaping (Result<[Comment], APIClientError>) -> Void) {
-        guard let url = URL(string: "http://hn.algolia.com/api/v1/items/\(id)") else {
+    func comment(id: Int, completionHandler: @escaping (Result<[Comment], APIClientError>) -> Void) {
+        guard let url = API.comment(id).url else {
             completionHandler(.failure(.invalidURL))
             return
         }
@@ -344,10 +379,10 @@ extension JSONDecoder {
     
 }
 
-struct FailableCodableArray<Element: Codable>: Codable {
-    var elements: [Element]
+private struct FailableCodableArray<Element: Codable>: Codable {
+    fileprivate var elements: [Element]
     
-    init(from decoder: Decoder) throws {
+    fileprivate init(from decoder: Decoder) throws {
         var container = try decoder.unkeyedContainer()
         var elements = [Element]()
         if let count = container.count {
@@ -361,16 +396,16 @@ struct FailableCodableArray<Element: Codable>: Codable {
         self.elements = elements
     }
     
-    func encode(to encoder: Encoder) throws {
+    fileprivate func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(elements)
     }
 }
 
-struct FailableDecodable<Base: Codable>: Codable {
-    let base: Base?
+private struct FailableDecodable<Base: Codable>: Codable {
+    fileprivate let base: Base?
     
-    init(from decoder: Decoder) throws {
+    fileprivate init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         self.base = try? container.decode(Base.self)
     }

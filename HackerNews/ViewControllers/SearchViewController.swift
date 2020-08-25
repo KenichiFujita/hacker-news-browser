@@ -95,7 +95,7 @@ class SearchViewController: UIViewController {
     }
     
     func searchStories(searchWord: String) {
-        api.searchStories(searchWord: searchWord) { (result) in
+        api.searchStories(searchText: searchWord) { (result) in
             if case .success(let stories) = result {
                 self.stories = stories
                 DispatchQueue.main.async {
