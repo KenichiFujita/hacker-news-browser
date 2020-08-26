@@ -145,7 +145,7 @@ extension Comment {
 
 class APIClient {
     
-    private var session: URLSession
+    private let session: URLSession
     private var hackerNewsSearchTask: URLSessionTask?
     
     init(session: URLSession = URLSession(configuration: .default, delegate: nil, delegateQueue: .main)) {

@@ -27,10 +27,8 @@ class APIClientTests: XCTestCase {
     }
 
     func testIds_WhenTopStoryIDsSuccessfullyFetched_ShouldReturnArrayOfInt() {
-        guard let path = Bundle.main.path(forResource: "SuccessfulIDsData", ofType: "json"), let jsonData = try? String(contentsOfFile: path).data(using: .utf8) else {
-            XCTFail()
-            return
-        }
+        let path = Bundle.main.path(forResource: "SuccessfulIDsData", ofType: "json")!
+        let jsonData = try? String(contentsOfFile: path).data(using: .utf8)
         MockURLProtocol.stubResponseData = jsonData
         let expectation = XCTestExpectation()
         
@@ -39,19 +37,16 @@ class APIClientTests: XCTestCase {
                 XCTFail()
                 return
             }
-            XCTAssertEqual(ids.count, 200)
+            XCTAssertEqual(ids.count, 5)
             XCTAssertEqual(ids.first, 24261826)
-            XCTAssertEqual(ids.last, 24241561)
+            XCTAssertEqual(ids.last, 24260337)
             expectation.fulfill()
         })
-        self.wait(for: [expectation], timeout: 0.2)
+        wait(for: [expectation], timeout: 0.2)
     }
     
     func testIds_WhenInvalidJSONFetched_ShouldReturnError() {
-        guard let invalidJSONData = "null".data(using: .utf8) else {
-            XCTFail()
-            return
-        }
+        let invalidJSONData = "null".data(using: .utf8)
         MockURLProtocol.stubResponseData = invalidJSONData
         let expectation = XCTestExpectation()
         
@@ -63,7 +58,7 @@ class APIClientTests: XCTestCase {
             XCTAssertEqual(error, APIClientError.decodingError)
             expectation.fulfill()
         })
-        self.wait(for: [expectation], timeout: 0.2)
+        wait(for: [expectation], timeout: 0.2)
     }
     
     func testIds_WhenNoDataFetched_ShouldReturnError() {
@@ -78,21 +73,22 @@ class APIClientTests: XCTestCase {
             XCTAssertEqual(error, APIClientError.domainError)
             expectation.fulfill()
         })
-        self.wait(for: [expectation], timeout: 0.2)
+        wait(for: [expectation], timeout: 0.2)
     }
     
 
     func testStories_WhenNoIDsPassed_ShouldReturnEmptyArray() {
+        let expectation = XCTestExpectation()
         api.stories(for: [], completionHandler: { stories in
             XCTAssertEqual(stories, [])
+            expectation.fulfill()
         })
+        wait(for: [expectation], timeout: 0.2)
     }
     
     func testStories_WhenValidStoriesFetched_ShouldReturnStories() {
-        guard let path = Bundle.main.path(forResource: "SuccessfulStoryData", ofType: "json"), let jsonData = try? String(contentsOfFile: path).data(using: .utf8) else {
-            XCTFail()
-            return
-        }
+        let path = Bundle.main.path(forResource: "SuccessfulStoryData", ofType: "json")!
+        let jsonData = try? String(contentsOfFile: path).data(using: .utf8)
         MockURLProtocol.stubResponseData = jsonData
         let expectation = XCTestExpectation()
         
@@ -109,7 +105,7 @@ class APIClientTests: XCTestCase {
             XCTAssertEqual(stories[2].id, 00000001)
             expectation.fulfill()
         })
-        self.wait(for: [expectation], timeout: 0.2)
+        wait(for: [expectation], timeout: 0.2)
     }
     
     func testStories_WhenFetchingDataFailed_ShouldReturnValidArray() {
@@ -120,7 +116,7 @@ class APIClientTests: XCTestCase {
             XCTAssertEqual(stories, [])
             expectation.fulfill()
         })
-        self.wait(for: [expectation], timeout: 0.2)
+        wait(for: [expectation], timeout: 0.2)
     }
     
     
