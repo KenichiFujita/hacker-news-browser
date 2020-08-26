@@ -28,7 +28,7 @@ class APIClientTests: XCTestCase {
 
     func testIds_WhenTopStoryIDsSuccessfullyFetched_ShouldReturnArrayOfInt() {
         let path = Bundle.main.path(forResource: "SuccessfulIDsData", ofType: "json")!
-        let jsonData = try? String(contentsOfFile: path).data(using: .utf8)
+        let jsonData = try! String(contentsOfFile: path).data(using: .utf8)
         MockURLProtocol.stubResponseData = jsonData
         let expectation = XCTestExpectation()
         
@@ -88,7 +88,7 @@ class APIClientTests: XCTestCase {
     
     func testStories_WhenValidStoriesFetched_ShouldReturnStories() {
         let path = Bundle.main.path(forResource: "SuccessfulStoryData", ofType: "json")!
-        let jsonData = try? String(contentsOfFile: path).data(using: .utf8)
+        let jsonData = try! String(contentsOfFile: path).data(using: .utf8)
         MockURLProtocol.stubResponseData = jsonData
         let expectation = XCTestExpectation()
         
