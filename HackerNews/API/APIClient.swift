@@ -148,7 +148,7 @@ class APIClient {
     private let session: URLSession
     private var hackerNewsSearchTask: URLSessionTask?
     
-    init(session: URLSession = URLSession(configuration: .default, delegate: nil, delegateQueue: .main)) {
+    init(session: URLSession = URLSession(configuration: .default)) {
         self.session = session
     }
     
@@ -169,7 +169,9 @@ class APIClient {
             }
             do {
                 let item = try JSONDecoder.hackerNews.decode(Item.self, from: data)
-                completionHandler(.success(item))
+                DispatchQueue.main.async {
+                    completionHandler(.success(item))
+                }
             }
             catch {
                 completionHandler(.failure(.decodingError))
@@ -309,7 +311,9 @@ extension APIClient {
             do {
                 let hnsStoryResponse = try JSONDecoder.hackerNewsSearch.decode(HNSStoryResponse.self, from: data)
                 let hnsStories = hnsStoryResponse.hits.compactMap { $0 }
-                completionHandler(.success(hnsStories.compactMap { Story(hnsStory: $0) }))
+                DispatchQueue.main.async {
+                    completionHandler(.success(hnsStories.compactMap { Story(hnsStory: $0) }))
+                }
             }
             catch {
                 completionHandler(.failure(.decodingError))
@@ -335,7 +339,9 @@ extension APIClient {
             }
             do {
                 let comments = try JSONDecoder.hackerNewsSearch.decode(HNSCommentResponse.self, from: data).children.elements
-                completionHandler(.success(comments.map { Comment(hnsComment: $0) }))
+                DispatchQueue.main.async {
+                    completionHandler(.success(comments.map { Comment(hnsComment: $0) }))
+                }
             }
             catch {
                 completionHandler(.failure(.decodingError))
