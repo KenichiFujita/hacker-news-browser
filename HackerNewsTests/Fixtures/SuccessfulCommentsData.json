@@ -1,0 +1,77 @@
+{
+  "id": 1,
+  "created_at": "200610-09T18:21:51.000Z",
+  "created_at_i": 1160418111,
+  "type": "story",
+  "author": "testAuthorParent",
+  "title": "Test Story",
+  "url": "http://ycombinator.com",
+  "text": "null",
+  "points": 61,
+  "parent_id": null,
+  "story_id": null,
+  "children": [
+    {
+      "id": 11,
+      "created_at": "2009-02-19T12:21:23.000Z",
+      "created_at_i": 11,
+      "type": "comment",
+      "author": "testCommentAuthor1-a",
+      "title": "null",
+      "url": "null",
+      "text": "Test Comment Text 1-a",
+      "points": null,
+      "parent_id": 1,
+      "story_id": 1,
+      "children": [],
+      "option": []
+    },
+    {
+      "id": 12,
+      "created_at": "2009-02-19T12:21:23.000Z",
+      "created_at_i": 12,
+      "type": "comment",
+      "author": "testCommentAuthor1-b",
+      "title": "null",
+      "url": "null",
+      "text": "Test Comment Text 1-b",
+      "points": null,
+      "parent_id": 1,
+      "story_id": 1,
+      "children": [
+        {
+          "id": 121,
+          "created_at": "2009-02-19T12:21:23.000Z",
+          "created_at_i": 111,
+          "type": "comment",
+          "author": "testCommentAuthor1-b-a",
+          "title": "null",
+          "url": "null",
+          "text": "Test Comment Text 1-b-a",
+          "points": null,
+          "parent_id": 12,
+          "story_id": 1,
+          "children": [],
+          "option": []
+        },
+        {
+          "id": 122,
+          "created_at": "2009-02-19T12:21:23.000Z",
+          "created_at_i": 112,
+          "type": "comment",
+          "author": "testCommentAuthor1-b-b",
+          "title": "null",
+          "url": "null",
+          "text": "Test Comment Text 1-b-b",
+          "points": null,
+          "parent_id": 12,
+          "story_id": 1,
+          "children": [],
+          "option": []
+        }
+      ],
+      "option": []
+    }
+  ],
+  "options": []
+}

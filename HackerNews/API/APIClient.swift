@@ -277,7 +277,7 @@ private struct HNSComment: Codable {
         case date = "createdAt"
         case by = "author"
         case text
-        case parent = "parentID"
+        case parent = "parentId"
         case storyID
         case comments = "children"
     }
@@ -298,8 +298,13 @@ extension APIClient {
         }
         self.hackerNewsSearchTask = session.dataTask(with: url) { data, response, error in
             guard let data = data else {
-                completionHandler(.failure(.domainError))
-                return
+                if let _ = error {
+                    completionHandler(.failure(.domainError))
+                    return
+                } else {
+                    completionHandler(.failure(.unkonwnError))
+                    return
+                }
             }
             do {
                 let hnsStoryResponse = try JSONDecoder.hackerNewsSearch.decode(HNSStoryResponse.self, from: data)
@@ -320,8 +325,13 @@ extension APIClient {
         }
         session.dataTask(with: url) { data, response, error in
             guard let data = data else {
-                completionHandler(.failure(.domainError))
-                return
+                if let _ = error {
+                    completionHandler(.failure(.domainError))
+                    return
+                } else {
+                    completionHandler(.failure(.unkonwnError))
+                    return
+                }
             }
             do {
                 let comments = try JSONDecoder.hackerNewsSearch.decode(HNSCommentResponse.self, from: data).children.elements

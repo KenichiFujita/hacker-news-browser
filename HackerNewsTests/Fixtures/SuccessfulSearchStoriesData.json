@@ -1,0 +1,145 @@
+{
+  "hits": [
+    {
+      "created_at": "2013-02-14T07:37:14.000Z",
+      "title": "A Most Peculiar Test Drive",
+      "url": "http://www.teslamotors.com/blog/most-peculiar-test-drive",
+      "author": "reneherse",
+      "points": 1815,
+      "story_text": "",
+      "comment_text": null,
+      "num_comments": 581,
+      "story_id": null,
+      "story_title": null,
+      "story_url": null,
+      "parent_id": null,
+      "created_at_i": 1360827434,
+      "relevancy_score": 4450,
+      "_tags": [
+        "story",
+        "author_reneherse",
+        "story_5218288"
+      ],
+      "objectID": "5218288",
+      "_highlightResult": {
+        "title": {
+          "value": "A Most Peculiar <em>Test</em> Drive",
+          "matchLevel": "full",
+          "fullyHighlighted": false,
+          "matchedWords": [
+            "test"
+          ]
+        },
+        "url": {
+          "value": "http://www.teslamotors.com/blog/most-peculiar-<em>test</em>-drive",
+          "matchLevel": "full",
+          "fullyHighlighted": false,
+          "matchedWords": [
+            "test"
+          ]
+        },
+        "author": {
+          "value": "reneherse",
+          "matchLevel": "none",
+          "matchedWords": []
+        },
+        "story_text": {
+          "value": "",
+          "matchLevel": "none",
+          "matchedWords": []
+        }
+      }
+    },
+    {
+      "created_at": "2016-10-13T15:15:48.000Z",
+      "title": "Google's “Director of Engineering” Hiring Test",
+      "url": "http://www.gwan.com/blog/20160405.html",
+      "author": "fatihky",
+      "points": 1764,
+      "story_text": null,
+      "comment_text": null,
+      "num_comments": 923,
+      "story_id": null,
+      "story_title": null,
+      "story_url": null,
+      "parent_id": null,
+      "created_at_i": 1476371748,
+      "relevancy_score": 7017,
+      "_tags": [
+        "story",
+        "author_fatihky",
+        "story_12701272"
+      ],
+      "objectID": "12701272",
+      "_highlightResult": {
+        "title": {
+          "value": "Google's “Director of Engineering” Hiring <em>Test</em>",
+          "matchLevel": "full",
+          "fullyHighlighted": false,
+          "matchedWords": [
+            "test"
+          ]
+        },
+        "url": {
+          "value": "http://www.gwan.com/blog/20160405.html",
+          "matchLevel": "none",
+          "matchedWords": []
+        },
+        "author": {
+          "value": "fatihky",
+          "matchLevel": "none",
+          "matchedWords": []
+        }
+      }
+    },
+    {
+      "created_at": "2018-06-19T15:28:29.000Z",
+      "title": "Blender is testing PeerTube after YouTube blocks their videos worldwide",
+      "url": "https://www.blender.org/media-exposure/youtube-blocks-blender-videos-worldwide/",
+      "author": "gargron",
+      "points": 1473,
+      "story_text": null,
+      "comment_text": null,
+      "num_comments": 426,
+      "story_id": null,
+      "story_title": null,
+      "story_url": null,
+      "parent_id": null,
+      "created_at_i": 1529422109,
+      "_tags": [
+        "story",
+        "author_gargron",
+        "story_17347560"
+      ],
+      "objectID": "17347560",
+      "_highlightResult": {
+        "title": {
+          "value": "Blender is <em>test</em>ing PeerTube after YouTube blocks their videos worldwide",
+          "matchLevel": "full",
+          "fullyHighlighted": false,
+          "matchedWords": [
+            "test"
+          ]
+        },
+        "url": {
+          "value": "https://www.blender.org/media-exposure/youtube-blocks-blender-videos-worldwide/",
+          "matchLevel": "none",
+          "matchedWords": []
+        },
+        "author": {
+          "value": "gargron",
+          "matchLevel": "none",
+          "matchedWords": []
+        }
+      }
+    }
+  ],
+  "nbHits": 142693,
+  "page": 0,
+  "nbPages": 50,
+  "hitsPerPage": 20,
+  "exhaustiveNbHits": false,
+  "query": "test",
+  "params": "advancedSyntax=true&analytics=true&analyticsTags=backend&query=test&tags=story",
+  "processingTimeMS": 6
+}
