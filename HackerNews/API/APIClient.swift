@@ -160,10 +160,14 @@ class APIClient {
         session.dataTask(with: itemUrl) { data, response, error in
             guard let data = data else {
                 if let _ = error {
-                    completionHandler(.failure(.domainError))
+                    DispatchQueue.main.async {
+                        completionHandler(.failure(.domainError))
+                    }
                     return
                 } else {
-                    completionHandler(.failure(.unkonwnError))
+                    DispatchQueue.main.async {
+                        completionHandler(.failure(.unkonwnError))
+                    }
                     return
                 }
             }
@@ -174,7 +178,9 @@ class APIClient {
                 }
             }
             catch {
-                completionHandler(.failure(.decodingError))
+                DispatchQueue.main.async {
+                    completionHandler(.failure(.decodingError))
+                }
             }
         }.resume()
     }
@@ -212,10 +218,14 @@ class APIClient {
         session.dataTask(with: url) { data, response, error in
             guard let data = data else {
                 if let _ = error {
-                    completionHandler(.failure(.domainError))
+                    DispatchQueue.main.async {
+                        completionHandler(.failure(.domainError))
+                    }
                     return
                 } else {
-                    completionHandler(.failure(.unkonwnError))
+                    DispatchQueue.main.async {
+                        completionHandler(.failure(.unkonwnError))
+                    }
                     return
                 }
             }
@@ -223,11 +233,15 @@ class APIClient {
                 let json = try JSONSerialization.jsonObject(with: data, options: [])
                 if let json = json as? [Int] {
                     let ids = Array(json[0..<min(200, json.count)])
-                    completionHandler(.success(ids))
+                    DispatchQueue.main.async {
+                        completionHandler(.success(ids))
+                    }
                 }
             }
             catch {
-                completionHandler(.failure(.decodingError))
+                DispatchQueue.main.async {
+                    completionHandler(.failure(.decodingError))
+                }
             }
             
         }.resume()
@@ -301,10 +315,14 @@ extension APIClient {
         self.hackerNewsSearchTask = session.dataTask(with: url) { data, response, error in
             guard let data = data else {
                 if let _ = error {
-                    completionHandler(.failure(.domainError))
+                    DispatchQueue.main.async {
+                        completionHandler(.failure(.domainError))
+                    }
                     return
                 } else {
-                    completionHandler(.failure(.unkonwnError))
+                    DispatchQueue.main.async {
+                        completionHandler(.failure(.unkonwnError))
+                    }
                     return
                 }
             }
@@ -316,7 +334,9 @@ extension APIClient {
                 }
             }
             catch {
-                completionHandler(.failure(.decodingError))
+                DispatchQueue.main.async {
+                    completionHandler(.failure(.decodingError))
+                }
             }
         }
         hackerNewsSearchTask?.resume()
@@ -330,10 +350,14 @@ extension APIClient {
         session.dataTask(with: url) { data, response, error in
             guard let data = data else {
                 if let _ = error {
-                    completionHandler(.failure(.domainError))
+                    DispatchQueue.main.async {
+                        completionHandler(.failure(.domainError))
+                    }
                     return
                 } else {
-                    completionHandler(.failure(.unkonwnError))
+                    DispatchQueue.main.async {
+                        completionHandler(.failure(.unkonwnError))
+                    }
                     return
                 }
             }
@@ -344,7 +368,9 @@ extension APIClient {
                 }
             }
             catch {
-                completionHandler(.failure(.decodingError))
+                DispatchQueue.main.async {
+                    completionHandler(.failure(.decodingError))
+                }
             }
         }.resume()
     }

@@ -40,6 +40,7 @@ class APIClientTests: XCTestCase {
             XCTAssertEqual(ids.count, 5)
             XCTAssertEqual(ids.first, 24261826)
             XCTAssertEqual(ids.last, 24260337)
+            XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
         wait(for: [expectation], timeout: 0.2)
@@ -56,6 +57,7 @@ class APIClientTests: XCTestCase {
                 return
             }
             XCTAssertEqual(error, APIClientError.decodingError)
+            XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
         wait(for: [expectation], timeout: 0.2)
@@ -71,6 +73,7 @@ class APIClientTests: XCTestCase {
                 return
             }
             XCTAssertEqual(error, APIClientError.domainError)
+            XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
         wait(for: [expectation], timeout: 0.2)
@@ -81,6 +84,7 @@ class APIClientTests: XCTestCase {
         let expectation = XCTestExpectation()
         api.stories(for: [], completionHandler: { stories in
             XCTAssertEqual(stories, [])
+            XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
         wait(for: [expectation], timeout: 0.2)
@@ -103,6 +107,7 @@ class APIClientTests: XCTestCase {
             XCTAssertEqual(stories[0].id, 00000001)
             XCTAssertEqual(stories[1].id, 00000001)
             XCTAssertEqual(stories[2].id, 00000001)
+            XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
         wait(for: [expectation], timeout: 0.2)
@@ -114,6 +119,7 @@ class APIClientTests: XCTestCase {
         
         api.stories(for: [1, 2, 3], completionHandler: { stories in
             XCTAssertEqual(stories, [])
+            XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
         wait(for: [expectation], timeout: 0.2)
@@ -139,6 +145,7 @@ class APIClientTests: XCTestCase {
             XCTAssertEqual(stories[0].descendants, 581)
             XCTAssertEqual(stories[1].descendants, 923)
             XCTAssertEqual(stories[2].descendants, 426)
+            XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
         wait(for: [expectation], timeout: 0.2)
@@ -153,6 +160,7 @@ class APIClientTests: XCTestCase {
                 return
             }
             XCTAssertEqual(stories, [])
+            XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
         wait(for: [expectation], timeout: 0.2)
@@ -168,6 +176,7 @@ class APIClientTests: XCTestCase {
                 return
             }
             XCTAssertEqual(error, APIClientError.domainError)
+            XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
         wait(for: [expectation], timeout: 0.2)
@@ -184,6 +193,7 @@ class APIClientTests: XCTestCase {
                 return
             }
             XCTAssertEqual(error, APIClientError.decodingError)
+            XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
         wait(for: [expectation], timeout: 0.2)
@@ -217,6 +227,7 @@ class APIClientTests: XCTestCase {
             XCTAssertEqual(comments[1].comments[1].text, "Test Comment Text 1-b-b")
             XCTAssertEqual(comments[1].comments[1].parent, 12)
             XCTAssertEqual(comments[1].comments[1].tier, 1)
+            XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
         wait(for: [expectation], timeout: 0.2)
@@ -232,6 +243,7 @@ class APIClientTests: XCTestCase {
                 return
             }
             XCTAssertEqual(error, APIClientError.domainError)
+            XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
         wait(for: [expectation], timeout: 0.2)
@@ -247,6 +259,7 @@ class APIClientTests: XCTestCase {
                 return
             }
             XCTAssertEqual(error, APIClientError.decodingError)
+            XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
         wait(for: [expectation], timeout: 0.2)
