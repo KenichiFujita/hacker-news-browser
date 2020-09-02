@@ -20,7 +20,7 @@ class StoryStore {
     func stories(for type: StoryQueryType,
                  offset: Int,
                  limit: Int,
-                 completionHandler: @escaping (Result<[Story], APIClientError>) -> Void ) {
+                 completionHandler: @escaping (Result<[Story], Error>) -> Void ) {
         
         guard let idsForType = self.idsForTypes[type] else {
             api.ids(for: type) { (result) in
