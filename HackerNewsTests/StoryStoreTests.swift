@@ -178,3 +178,9 @@ private class MockAPIClient: APIClient {
     }
 
 }
+
+extension Story {
+    fileprivate init(id: Int) {
+        self.init(by: "testUser\(id)", descendants: id, id: id, score: id, date: Date(), title: "Test Title \(id)", url: "testURL", text: "Test Text \(id)")
+    }
+}
