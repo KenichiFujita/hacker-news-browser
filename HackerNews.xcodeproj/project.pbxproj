@@ -42,6 +42,7 @@
 		22E8450124F84C1A007132B1 /* SuccessfulSearchStoriesData.json in Resources */ = {isa = PBXBuildFile; fileRef = 22E844FF24F8424F007132B1 /* SuccessfulSearchStoriesData.json */; };
 		22E8450324F893D5007132B1 /* SuccessfulCommentsData.json in Resources */ = {isa = PBXBuildFile; fileRef = 22E8450224F893D5007132B1 /* SuccessfulCommentsData.json */; };
 		22E8450424F897C5007132B1 /* SuccessfulCommentsData.json in Resources */ = {isa = PBXBuildFile; fileRef = 22E8450224F893D5007132B1 /* SuccessfulCommentsData.json */; };
+		22E8450624FDD032007132B1 /* StoryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E8450524FDD032007132B1 /* StoryStoreTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -110,6 +111,7 @@
 		22CD275F24228E5A006CF0C4 /* StoryImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryImageCache.swift; sourceTree = "<group>"; };
 		22E844FF24F8424F007132B1 /* SuccessfulSearchStoriesData.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = SuccessfulSearchStoriesData.json; sourceTree = "<group>"; };
 		22E8450224F893D5007132B1 /* SuccessfulCommentsData.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = SuccessfulCommentsData.json; sourceTree = "<group>"; };
+		22E8450524FDD032007132B1 /* StoryStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryStoreTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -251,6 +253,7 @@
 			isa = PBXGroup;
 			children = (
 				221F4DB924F2F98D00CC8FCD /* APIClientTests.swift */,
+				22E8450524FDD032007132B1 /* StoryStoreTests.swift */,
 				221F4DBB24F2FB2800CC8FCD /* MockURLProtocol.swift */,
 				228AA7082381B0C900B4D512 /* HackerNewsTests.swift */,
 				228AA70A2381B0C900B4D512 /* Info.plist */,
@@ -442,6 +445,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				221F4DBE24F2FF6400CC8FCD /* MockURLProtocol.swift in Sources */,
+				22E8450624FDD032007132B1 /* StoryStoreTests.swift in Sources */,
 				228AA7092381B0C900B4D512 /* HackerNewsTests.swift in Sources */,
 				221F4DBD24F2FF6100CC8FCD /* APIClientTests.swift in Sources */,
 			);

@@ -10,33 +10,38 @@ import Foundation
 
 class StoryStore {
     
-    let api = APIClient()
-    
-    var idsForTypes: [StoryQueryType:[Int]] = [:]
+    private let api: APIClient
+    private var idsForTypes: [StoryQueryType:[Int]] = [:]
+
+    init(api: APIClient = APIClient()) {
+        self.api = api
+    }
     
     func stories(for type: StoryQueryType,
                  offset: Int,
                  limit: Int,
-                 completionHandler: @escaping ([Story]) -> Void ) {
+                 completionHandler: @escaping (Result<[Story], APIClientError>) -> Void ) {
         
         guard let idsForType = self.idsForTypes[type] else {
             api.ids(for: type) { (result) in
-                if case .success(let ids) = result {
-                    let idsForType = ids
-                    self.idsForTypes[type] = idsForType
-                    self.api.stories(for: Array(idsForType[offset..<(offset + limit)])) { (stories) in
-                        completionHandler(stories)
+                switch result {
+                case .success(let ids):
+                    self.idsForTypes[type] = ids
+                    self.api.stories(for: Array(ids[offset..<(min(offset + limit, ids.count))])) { (stories) in
+                        completionHandler(.success(stories))
                     }
+                case .failure(let error):
+                    completionHandler(.failure(error))
                 }
             }
             return
         }
         if idsForType.count > offset {
             self.api.stories(for: Array(idsForType[offset..<min((offset + limit), idsForType.count)])) { (stories) in
-                completionHandler(stories)
+                completionHandler(.success(stories))
             }
         } else {
-            completionHandler([])
+            completionHandler(.success([]))
         }
         
     }

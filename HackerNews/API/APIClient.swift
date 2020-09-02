@@ -452,3 +452,17 @@ private struct FailableDecodable<Base: Codable>: Codable {
         self.base = try? container.decode(Base.self)
     }
 }
+
+extension Story {
+    init(id: Int) {
+        by = "testUser\(id)"
+        self.descendants = id
+        self.id = id
+        self.commentIDs = []
+        self.score = id
+        self.date = Date()
+        self.title = "Test Title \(id)"
+        self.url = "url"
+        self.text = "Test Text \(id)"
+    }
+}

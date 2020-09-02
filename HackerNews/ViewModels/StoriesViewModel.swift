@@ -44,12 +44,14 @@ class StoriesViewModel: StoriesViewModelType {
 
     func loadNext() {
         hasMore = false
-        store.stories(for: self.type, offset: self.stories.count, limit: 10) { (stories) in
-            self.stories.append(contentsOf: stories)
-            if stories.count < 10 {
-                self.hasMore = false
-            } else {
-                self.hasMore = true
+        store.stories(for: self.type, offset: self.stories.count, limit: 10) { (result) in
+            if case .success(let stories) = result {
+                self.stories.append(contentsOf: stories)
+                if stories.count < 10 {
+                    self.hasMore = false
+                } else {
+                    self.hasMore = true
+                }
             }
         }
     }
