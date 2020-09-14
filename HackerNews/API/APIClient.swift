@@ -4,7 +4,7 @@
 //
 //  Created by Kenichi Fujita on 11/22/19.
 //  Copyright © 2019 Kenichi Fujita. All rights reserved.
-//
+
 
 import Foundation
 
