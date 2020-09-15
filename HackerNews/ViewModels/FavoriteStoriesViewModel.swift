@@ -25,7 +25,11 @@ class FavoriteStoriesViewModel: StoriesViewModelType {
     
     init(favoritesStore: FavoritesStore) {
         self.favoritesStore = favoritesStore
-        favoritesStore.observer = self
+        favoritesStore.addObserver(self)
+    }
+
+    deinit {
+        favoritesStore.removeObserver(self)
     }
 
     func load() {

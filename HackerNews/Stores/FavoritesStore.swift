@@ -8,28 +8,29 @@
 
 import Foundation
 
-protocol FavoriteStoreObserver: AnyObject {
+@objc protocol FavoriteStoreObserver: AnyObject {
     func favoriteStoreUpdated(_ store: FavoritesStore)
 }
 
-class FavoritesStore {
-    var ids: [Int] = []
-    let key = "favorites"
-    let userDefaults: UserDefaults
-    weak var observer: FavoriteStoreObserver?
+class FavoritesStore: NSObject {
+    private var ids: [Int] = []
+    private let key = "favorites"
+    private let userDefaults: UserDefaults
+    private var observers: NSHashTable? = NSHashTable<FavoriteStoreObserver>.weakObjects()
+    var favorites: [Int] {
+        return ids
+    }
       
     init(userDefaults: UserDefaults = UserDefaults.standard) {
         self.userDefaults = userDefaults
         self.ids = userDefaults.array(forKey: key) as? [Int] ?? []
     }
     
-    var favorites: [Int] {
-        return ids
-    }
-    
     func add(storyId: Int) {
         self.ids.insert(storyId, at: 0)
-        observer?.favoriteStoreUpdated(self)
+        observers?.allObjects.forEach {
+            $0.favoriteStoreUpdated(self)
+        }
         save()
     }
     
@@ -38,7 +39,9 @@ class FavoritesStore {
             return
         }
         self.ids.remove(at: index)
-        observer?.favoriteStoreUpdated(self)
+        observers?.allObjects.forEach {
+            $0.favoriteStoreUpdated(self)
+        }
         save()
     }
     
@@ -48,6 +51,14 @@ class FavoritesStore {
     
     private func save() {
         userDefaults.set(self.ids, forKey: key)
+    }
+
+    func addObserver(_ observer: FavoriteStoreObserver) {
+        observers?.add(observer)
+    }
+
+    func removeObserver(_ observer: FavoriteStoreObserver) {
+        observers?.remove(observer)
     }
     
 }
