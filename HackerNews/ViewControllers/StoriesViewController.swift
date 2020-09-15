@@ -141,7 +141,7 @@ extension StoriesViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
 
-        let favoritesStore = FavoritesStore.shared
+        let favoritesStore = viewModel.favoritesStore
         let story = viewModel.stories[indexPath.row]
         let title: String = favoritesStore.has(story: story.id) ? "Unfavorite" : "Favorite"
 

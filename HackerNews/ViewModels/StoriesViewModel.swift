@@ -17,13 +17,14 @@ protocol StoriesViewModelType: class {
     var hasMore: Bool { get }
     var delegate: StoriesViewModelDelegate? { get set }
     var canShowInstruction: Bool { get }
+    var favoritesStore: FavoritesStore { get }
     func load()
     func loadNext()
 }
 
 
 class StoriesViewModel: StoriesViewModelType {
-    
+
     private(set) var stories: [Story] = [] {
         didSet {
             delegate?.storiesViewModelUpdated(self)
@@ -37,11 +38,13 @@ class StoriesViewModel: StoriesViewModelType {
     var canShowInstruction: Bool {
       return false
     }
+    var favoritesStore: FavoritesStore
 
-    init(storyQueryType type: StoryQueryType, storyStore: StoryStore, storyImageInfoStore: StoryImageInfoStore) {
+    init(storyQueryType type: StoryQueryType, storyStore: StoryStore, storyImageInfoStore: StoryImageInfoStore, favoritesStore: FavoritesStore) {
         self.type = type
         self.store = storyStore
         self.storyImageInfoStore = storyImageInfoStore
+        self.favoritesStore = favoritesStore
     }
 
     func load() {

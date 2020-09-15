@@ -17,7 +17,6 @@ class FavoritesStore {
     let key = "favorites"
     let userDefaults: UserDefaults
     weak var observer: FavoriteStoreObserver?
-    static let shared = FavoritesStore()
       
     init(userDefaults: UserDefaults = UserDefaults.standard) {
         self.userDefaults = userDefaults
