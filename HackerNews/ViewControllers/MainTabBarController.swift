@@ -9,16 +9,38 @@
 import UIKit
 
 class MainTabBarController: UITabBarController {
+
+    private let storyStore = StoryStore()
+    private let favoritesStore = FavoritesStore()
+    private let storyImageInfoStore = StoryImageInfoStore()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         viewControllers = [
-            navigationController(navigationBarTitle: "Top Stories", tabBarItemTitle: "Top",      tabBarIcon: UIImage(systemName: "list.number"),  viewModel: StoriesViewModel(storyQueryType: .top)),
-            navigationController(navigationBarTitle: "Ask HN",      tabBarItemTitle: "Ask",      tabBarIcon: UIImage(systemName: "questionmark"), viewModel: StoriesViewModel(storyQueryType: .ask)),
-            navigationController(navigationBarTitle: "Show HN",     tabBarItemTitle: "Show",     tabBarIcon: UIImage(systemName: "globe"),        viewModel: StoriesViewModel(storyQueryType: .show)),
+            navigationController(navigationBarTitle: "Top Stories",
+                                 tabBarItemTitle: "Top",
+                                 tabBarIcon: UIImage(systemName: "list.number"),
+                                 viewModel: StoriesViewModel(storyQueryType: .top,
+                                                             storyStore: storyStore,
+                                                             storyImageInfoStore: storyImageInfoStore)),
+            navigationController(navigationBarTitle: "Ask HN",
+                                 tabBarItemTitle: "Ask",
+                                 tabBarIcon: UIImage(systemName: "questionmark"),
+                                 viewModel: StoriesViewModel(storyQueryType: .ask,
+                                                             storyStore: storyStore,
+                                                             storyImageInfoStore: storyImageInfoStore)),
+            navigationController(navigationBarTitle: "Show HN",
+                                 tabBarItemTitle: "Show",
+                                 tabBarIcon: UIImage(systemName: "globe"),
+                                 viewModel: StoriesViewModel(storyQueryType: .show,
+                                                             storyStore: storyStore,
+                                                             storyImageInfoStore: storyImageInfoStore)),
             searchNavigationController(navigationBarTitle: "Search"),
-            navigationController(navigationBarTitle: "Favorites",   tabBarItemTitle: "Favorite", tabBarIcon: UIImage(systemName: "star"),         viewModel: FavoriteStoriesViewModel())
+            navigationController(navigationBarTitle: "Favorites",
+                                 tabBarItemTitle: "Favorite",
+                                 tabBarIcon: UIImage(systemName: "star"),
+                                 viewModel: FavoriteStoriesViewModel(favoritesStore: favoritesStore))
         ]
         
     }

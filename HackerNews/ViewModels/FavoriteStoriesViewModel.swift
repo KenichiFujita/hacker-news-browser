@@ -15,7 +15,7 @@ class FavoriteStoriesViewModel: StoriesViewModelType {
     }
     func loadNext() {
     }
-    
+    let store: FavoritesStore
     
     var stories: [Story] = [] {
         didSet {
@@ -32,7 +32,8 @@ class FavoriteStoriesViewModel: StoriesViewModelType {
         }
     }
     
-    init() {
+    init(favoritesStore: FavoritesStore) {
+        self.store = favoritesStore
         FavoritesStore.shared.observer = self
     }
 }

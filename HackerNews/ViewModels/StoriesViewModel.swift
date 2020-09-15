@@ -30,13 +30,20 @@ class StoriesViewModel: StoriesViewModelType {
         }
     }
     weak var delegate: StoriesViewModelDelegate?
-    let store = StoryStore()
+    let store: StoryStore
+    let storyImageInfoStore: StoryImageInfoStore
     let type: StoryQueryType
     var hasMore: Bool = false
     var canShowInstruction: Bool {
       return false
     }
-    
+
+    init(storyQueryType type: StoryQueryType, storyStore: StoryStore, storyImageInfoStore: StoryImageInfoStore) {
+        self.type = type
+        self.store = storyStore
+        self.storyImageInfoStore = storyImageInfoStore
+    }
+
     func load() {
         self.stories = []
         loadNext()
@@ -55,8 +62,5 @@ class StoriesViewModel: StoriesViewModelType {
             }
         }
     }
-    
-    init(storyQueryType type: StoryQueryType) {
-        self.type = type
-    }
+
 }
