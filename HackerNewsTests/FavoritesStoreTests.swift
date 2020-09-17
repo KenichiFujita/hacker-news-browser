@@ -24,7 +24,7 @@ class FavoritesStoreTests: XCTestCase {
         XCTAssertEqual(favoritesStore.favorites, [1, 2, 3, 4, 5])
     }
 
-    func testAddAndMethodsForObservers() {
+    func testAddAndAddObserver() {
         let userDefaults = UserDefaults()
         userDefaults.set([1, 2, 3, 4, 5], forKey: key)
         let favoritesStore = FavoritesStore(userDefaults: userDefaults)
@@ -32,16 +32,9 @@ class FavoritesStoreTests: XCTestCase {
         favoritesStore.add(storyId: 6)
 
         wait(for: [expectation], timeout: 0.2)
-        XCTAssertEqual(favoritesStore.favorites, [6, 1, 2, 3, 4, 5])
-        XCTAssertEqual(userDefaults.array(forKey: key) as! [Int], [6, 1, 2, 3, 4, 5])
-
-        favoritesStore.removeObserver(self)
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            favoritesStore.add(storyId: 7)
-            let userDefaultsArray = userDefaults.array(forKey: self.key) as! [Int]
-            XCTAssertEqual(userDefaultsArray.contains(7), false)
-        }
+        checkValueOfFavoritesAndUserDefaults(favoritesStore: favoritesStore,
+                                             userDefaults: userDefaults,
+                                             [6, 1, 2, 3, 4, 5])
     }
 
     func testHas() {
@@ -61,16 +54,46 @@ class FavoritesStoreTests: XCTestCase {
         let favoritesStore = FavoritesStore(userDefaults: userDefaults)
         favoritesStore.addObserver(self)
 
+        // Check if 1 is removed
+        XCTAssertEqual(favoritesStore.favorites, [1, 2, 3])
         favoritesStore.remove(storyId: 1)
-
         wait(for: [expectation], timeout: 0.2)
-        XCTAssertEqual(favoritesStore.favorites, [2, 3])
-        XCTAssertEqual(userDefaults.array(forKey: key) as! [Int], [2, 3])
+        checkValueOfFavoritesAndUserDefaults(favoritesStore: favoritesStore,
+                                             userDefaults: userDefaults,
+                                             [2, 3])
 
+        // Check if nothing happens when removing id that
         favoritesStore.remove(storyId: 100)
+        checkValueOfFavoritesAndUserDefaults(favoritesStore: favoritesStore,
+                                             userDefaults: userDefaults,
+                                             [2, 3])
+    }
 
-        XCTAssertEqual(favoritesStore.favorites, [2, 3])
-        XCTAssertEqual(userDefaults.array(forKey: key) as! [Int], [2, 3])
+    func testRemoveObserver() {
+        let userDefaults = UserDefaults()
+        userDefaults.set([1, 2, 3], forKey: key)
+        let favoritesStore = FavoritesStore(userDefaults: userDefaults)
+        favoritesStore.addObserver(self)
+
+        checkValueOfFavoritesAndUserDefaults(favoritesStore: favoritesStore,
+                                             userDefaults: userDefaults,
+                                             [1, 2, 3])
+
+        // Check observer removed and favoritesStoreUpdated won't be called.
+        expectation.isInverted = true
+        favoritesStore.removeObserver(self)
+        favoritesStore.add(storyId: 4)
+        wait(for: [expectation], timeout: 0.2)
+        checkValueOfFavoritesAndUserDefaults(favoritesStore: favoritesStore,
+                                             userDefaults: userDefaults,
+                                             [4, 1, 2, 3])
+    }
+
+    func checkValueOfFavoritesAndUserDefaults(favoritesStore: FavoritesStore,
+                                              userDefaults: UserDefaults,
+                                              _ value: [Int]) {
+        XCTAssertEqual(favoritesStore.favorites, value)
+        XCTAssertEqual(userDefaults.array(forKey: key) as! [Int], value)
     }
 
 }
