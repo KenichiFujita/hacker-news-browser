@@ -11,11 +11,13 @@ import XCTest
 
 class FavoritesStoreTests: XCTestCase {
 
-    var expectation = XCTestExpectation()
+    var expectation: XCTestExpectation!
     let key = "favorites"
 
     override func setUpWithError() throws { }
-    override func tearDownWithError() throws { }
+    override func tearDownWithError() throws {
+        expectation = nil
+    }
 
     func testInit() {
         let userDefaults = UserDefaults()
@@ -28,10 +30,8 @@ class FavoritesStoreTests: XCTestCase {
         let userDefaults = UserDefaults()
         userDefaults.set([1, 2, 3, 4, 5], forKey: key)
         let favoritesStore = FavoritesStore(userDefaults: userDefaults)
-        favoritesStore.addObserver(self)
-        favoritesStore.add(storyId: 6)
 
-        wait(for: [expectation], timeout: 0.2)
+        favoritesStore.add(storyId: 6)
         checkValueOfFavoritesAndUserDefaults(favoritesStore: favoritesStore,
                                              userDefaults: userDefaults,
                                              [6, 1, 2, 3, 4, 5])
@@ -52,41 +52,38 @@ class FavoritesStoreTests: XCTestCase {
         let userDefaults = UserDefaults()
         userDefaults.set([1, 2, 3], forKey: key)
         let favoritesStore = FavoritesStore(userDefaults: userDefaults)
-        favoritesStore.addObserver(self)
 
         // Check if 1 is removed
         XCTAssertEqual(favoritesStore.favorites, [1, 2, 3])
         favoritesStore.remove(storyId: 1)
-        wait(for: [expectation], timeout: 0.2)
         checkValueOfFavoritesAndUserDefaults(favoritesStore: favoritesStore,
                                              userDefaults: userDefaults,
                                              [2, 3])
 
-        // Check if nothing happens when removing id that
+        // Check if nothing happens when removing id that is not contained in favorites or userDefaults
         favoritesStore.remove(storyId: 100)
         checkValueOfFavoritesAndUserDefaults(favoritesStore: favoritesStore,
                                              userDefaults: userDefaults,
                                              [2, 3])
     }
 
-    func testRemoveObserver() {
+    func testObserver() {
         let userDefaults = UserDefaults()
         userDefaults.set([1, 2, 3], forKey: key)
         let favoritesStore = FavoritesStore(userDefaults: userDefaults)
+
+        // Expectation should be fulfilled if the observer has been added.
+        expectation = XCTestExpectation()
         favoritesStore.addObserver(self)
-
-        checkValueOfFavoritesAndUserDefaults(favoritesStore: favoritesStore,
-                                             userDefaults: userDefaults,
-                                             [1, 2, 3])
-
-        // Check observer removed and favoritesStoreUpdated won't be called.
-        expectation.isInverted = true
-        favoritesStore.removeObserver(self)
         favoritesStore.add(storyId: 4)
         wait(for: [expectation], timeout: 0.2)
-        checkValueOfFavoritesAndUserDefaults(favoritesStore: favoritesStore,
-                                             userDefaults: userDefaults,
-                                             [4, 1, 2, 3])
+
+        // Expectation shouldn't be fulfilled if the observer has been removed.
+        expectation = XCTestExpectation()
+        expectation.isInverted = true
+        favoritesStore.removeObserver(self)
+        favoritesStore.add(storyId: 5)
+        wait(for: [expectation], timeout: 0.2)
     }
 
     func checkValueOfFavoritesAndUserDefaults(favoritesStore: FavoritesStore,
