@@ -12,22 +12,24 @@ import XCTest
 class FavoritesStoreTests: XCTestCase {
 
     var expectation: XCTestExpectation!
+    var userDefaults: UserDefaults!
     let key = "favorites"
 
-    override func setUpWithError() throws { }
+    override func setUpWithError() throws {
+        userDefaults = UserDefaults(suiteName: #file)
+        userDefaults.removePersistentDomain(forName: #file)
+    }
     override func tearDownWithError() throws {
         expectation = nil
     }
 
     func testInit() {
-        let userDefaults = UserDefaults()
         userDefaults.set([1, 2, 3, 4, 5], forKey: key)
         let favoritesStore = FavoritesStore(userDefaults: userDefaults)
         XCTAssertEqual(favoritesStore.favorites, [1, 2, 3, 4, 5])
     }
 
     func testAddAndAddObserver() {
-        let userDefaults = UserDefaults()
         userDefaults.set([1, 2, 3, 4, 5], forKey: key)
         let favoritesStore = FavoritesStore(userDefaults: userDefaults)
 
@@ -38,7 +40,6 @@ class FavoritesStoreTests: XCTestCase {
     }
 
     func testHas() {
-        let userDefaults = UserDefaults()
         userDefaults.set([1, 2, 3], forKey: key)
         let favoritesStore = FavoritesStore(userDefaults: userDefaults)
 
@@ -49,7 +50,6 @@ class FavoritesStoreTests: XCTestCase {
     }
 
     func testRemove() {
-        let userDefaults = UserDefaults()
         userDefaults.set([1, 2, 3], forKey: key)
         let favoritesStore = FavoritesStore(userDefaults: userDefaults)
 
@@ -68,7 +68,6 @@ class FavoritesStoreTests: XCTestCase {
     }
 
     func testObserver() {
-        let userDefaults = UserDefaults()
         userDefaults.set([1, 2, 3], forKey: key)
         let favoritesStore = FavoritesStore(userDefaults: userDefaults)
 
