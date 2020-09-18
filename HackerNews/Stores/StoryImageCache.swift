@@ -12,20 +12,21 @@ import UIKit
 class StoryImageCache {
 
     private var storyImageInfos: [String: StoryImageInfo] = [:]
-    private static let key = "touchIcon"
+    static var key: String {
+        return "touchIcon"
+    }
     private let userDefaults: UserDefaults
-    private let notificationCenter: NotificationCenter
+    private let notificationCenter = NotificationCenter.default
     var imageInfos: [String: StoryImageInfo] {
         return storyImageInfos
     }
     
-    init(userDefaults: UserDefaults = UserDefaults.standard, notificationCenter: NotificationCenter = NotificationCenter.default) {
+    init(userDefaults: UserDefaults = UserDefaults.standard) {
         self.userDefaults = userDefaults
         if let cached = userDefaults.data(forKey: StoryImageCache.key),
             let decoded = try? JSONDecoder().decode([String: StoryImageInfo].self, from: cached) {
                 self.storyImageInfos = decoded
         }
-        self.notificationCenter = notificationCenter
         self.notificationCenter.addObserver(self, selector: #selector(didEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
     

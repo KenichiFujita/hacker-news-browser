@@ -15,12 +15,11 @@ class StoryImageCacheTests: XCTestCase {
     let key = "touchIcon"
 
     override func setUpWithError() throws {
-        userDefaults = UserDefaults(suiteName: "\(StoryImageCacheTests.self)")
+        userDefaults = UserDefaults(suiteName: #file)
+        userDefaults.removePersistentDomain(forName: #file)
     }
 
-    override func tearDownWithError() throws {
-        userDefaults.removePersistentDomain(forName: "\(StoryImageCacheTests.self)")
-    }
+    override func tearDownWithError() throws { }
 
     func testInit() {
         setImageInfoForUserDefaults(numberOfInfo: 5)
@@ -34,18 +33,17 @@ class StoryImageCacheTests: XCTestCase {
     func testAddStoryImageInfoAndDidEnterBackground() {
         let addedImageInfoHost = "AddedImageInfoHost"
         let addedImageInfoURL = "AddedImageInfoURL"
-        let notificationCenter = NotificationCenter()
-        let storyImageCache = StoryImageCache(userDefaults: userDefaults, notificationCenter: notificationCenter)
+        let storyImageCache = StoryImageCache(userDefaults: userDefaults)
         XCTAssertEqual(storyImageCache.imageInfos.count, 0)
 
         // Add storyImageInfo to StoryImageCache while not cached to UserDefaults.
         storyImageCache.addStoryImageInfo(storyHost: addedImageInfoHost, storyImageInfo: StoryImageInfo(url: URL(string: addedImageInfoURL)!))
         XCTAssertEqual(storyImageCache.imageInfos.count, 1)
         XCTAssertEqual(storyImageCache.imageInfos[addedImageInfoHost]!.url, URL(string: addedImageInfoURL))
-        XCTAssertNil(userDefaults.data(forKey: self.key))
+        XCTAssertNil(userDefaults.data(forKey: StoryImageCache.key))
 
         // storyImageInfo is cached when didEnterBackgroundNotification called.
-        notificationCenter.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
         let imageInfosInUserDefaults = try! JSONDecoder().decode([String: StoryImageInfo].self, from: userDefaults.data(forKey: self.key)!)
         XCTAssertEqual(imageInfosInUserDefaults.count, 1)
         XCTAssertEqual(imageInfosInUserDefaults[addedImageInfoHost]!.url, URL(string: addedImageInfoURL))
