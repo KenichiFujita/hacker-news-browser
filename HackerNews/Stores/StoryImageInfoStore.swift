@@ -11,18 +11,20 @@ import UIKit
 import SwiftSoup
 
 class StoryImageInfoStore {
+
     static let shared = StoryImageInfoStore()
     private let queue = DispatchQueue.global(qos: .default)
+    private let storyImageCache = StoryImageCache()
     
     func iconImageURL(url: String, host: String, completionHandler: @escaping (URL?) -> Void) {
         queue.async {
-            if let cachedStoryImageInfo = StoryImageCache.shared.storyImageInfos[host] {
+            if let cachedStoryImageInfo = self.storyImageCache.imageInfos[host] {
                 DispatchQueue.main.async {
                     completionHandler(cachedStoryImageInfo.touchIcon)
                 }
             } else {
                 self.imageInfo(url: url) { (storyImageinfo) in
-                    StoryImageCache.shared.addTouchIcon(storyHost: host, storyImageInfo: storyImageinfo)
+                    self.storyImageCache.addStoryImageInfo(storyHost: host, storyImageInfo: storyImageinfo)
                     completionHandler(storyImageinfo.touchIcon)
                 }
             }
@@ -98,7 +100,7 @@ class StoryImageInfoStore {
 
 
 struct StoryImageInfo: Codable {
-    public var url: URL
+    var url: URL
     private var appleTouchIconPrecomposed: URL?
     private var appleTouchIcon: URL?
     private var fluidIcon: URL?
