@@ -43,7 +43,7 @@ class APIClientTests: XCTestCase {
             XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
-        wait(for: [expectation], timeout: 0.2)
+        wait(for: [expectation], timeout: 1)
     }
     
     func testIds_WhenInvalidJSONFetched_ShouldReturnError() {
@@ -60,7 +60,7 @@ class APIClientTests: XCTestCase {
             XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
-        wait(for: [expectation], timeout: 0.2)
+        wait(for: [expectation], timeout: 1)
     }
     
     func testIds_WhenNoDataFetched_ShouldReturnError() {
@@ -76,7 +76,7 @@ class APIClientTests: XCTestCase {
             XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
-        wait(for: [expectation], timeout: 0.2)
+        wait(for: [expectation], timeout: 1)
     }
     
 
@@ -87,7 +87,7 @@ class APIClientTests: XCTestCase {
             XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
-        wait(for: [expectation], timeout: 0.2)
+        wait(for: [expectation], timeout: 1)
     }
     
     func testStories_WhenValidStoriesFetched_ShouldReturnStories() {
@@ -110,7 +110,7 @@ class APIClientTests: XCTestCase {
             XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
-        wait(for: [expectation], timeout: 0.2)
+        wait(for: [expectation], timeout: 1)
     }
     
     func testStories_WhenFetchingDataFailed_ShouldReturnValidArray() {
@@ -122,7 +122,7 @@ class APIClientTests: XCTestCase {
             XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
-        wait(for: [expectation], timeout: 0.2)
+        wait(for: [expectation], timeout: 1)
     }
 
     func testSearchStories_WhenSuccessfulDataFetched_ShouldReturnStories() {
@@ -148,7 +148,7 @@ class APIClientTests: XCTestCase {
             XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
-        wait(for: [expectation], timeout: 0.2)
+        wait(for: [expectation], timeout: 1)
     }
 
     func testSearchStories_WhenEmptySearchTextPassed_ShouldReturnEmptyArray() {
@@ -163,7 +163,7 @@ class APIClientTests: XCTestCase {
             XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
-        wait(for: [expectation], timeout: 0.2)
+        wait(for: [expectation], timeout: 1)
     }
 
     func testSearchStories_WhenHTTPRequestFailed_ShouldReturnError() {
@@ -179,7 +179,7 @@ class APIClientTests: XCTestCase {
             XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
-        wait(for: [expectation], timeout: 0.2)
+        wait(for: [expectation], timeout: 1)
     }
 
     func testSearchStories_WhenInvalidJSONFetched_ShouldReturnError() {
@@ -196,7 +196,7 @@ class APIClientTests: XCTestCase {
             XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
-        wait(for: [expectation], timeout: 0.2)
+        wait(for: [expectation], timeout: 1)
     }
 
     func testComment_WhenSuccessfulDataFetched_ShouldReturnComments() {
@@ -230,7 +230,7 @@ class APIClientTests: XCTestCase {
             XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
-        wait(for: [expectation], timeout: 0.2)
+        wait(for: [expectation], timeout: 1)
     }
 
     func testComment_WhenHTTPRequestFailed_ShouldReturnError() {
@@ -246,7 +246,7 @@ class APIClientTests: XCTestCase {
             XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
-        wait(for: [expectation], timeout: 0.2)
+        wait(for: [expectation], timeout: 1)
     }
 
     func testComment_WhenInvalidJSONDataFetched_ShouldReturnError() {
@@ -262,6 +262,6 @@ class APIClientTests: XCTestCase {
             XCTAssertEqual(Thread.isMainThread, true)
             expectation.fulfill()
         })
-        wait(for: [expectation], timeout: 0.2)
+        wait(for: [expectation], timeout: 1)
     }
 }
