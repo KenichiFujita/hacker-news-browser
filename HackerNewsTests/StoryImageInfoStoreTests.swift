@@ -24,7 +24,7 @@ class StoryImageInfoStoreTests: XCTestCase {
         let session = URLSession(configuration: configuration)
         let storyImageInfoCache = MockStoryImageInfoCache()
         let storyImageInfoStore = StoryImageInfoStore(session: session, storyImageInfoCache: storyImageInfoCache)
-        let path = Bundle.main.path(forResource: "HTML", ofType: "txt")!
+        let path = Bundle.main.path(forResource: "StoryImageInfoData", ofType: "html")!
         let htmlInText = try! String(contentsOfFile: path).data(using: .utf8)
         MockURLProtocol.stubResponseData = htmlInText
         let testStoryURLString = "https://test.url.com/story_"
@@ -77,7 +77,7 @@ class StoryImageInfoStoreTests: XCTestCase {
         let session = URLSession(configuration: configuration)
         let storyImageInfoCache = MockStoryImageInfoCache()
         let storyImageInfoStore = StoryImageInfoStore(session: session, storyImageInfoCache: storyImageInfoCache)
-        let path1 = Bundle.main.path(forResource: "HTML", ofType: "txt")!
+        let path1 = Bundle.main.path(forResource: "StoryImageInfoData", ofType: "html")!
         let htmlWithOgImageInText = try! String(contentsOfFile: path1).data(using: .utf8)
         MockURLProtocol.stubResponseData = htmlWithOgImageInText
         let testStoryURLString = "https://test.url.com/story_"
@@ -92,7 +92,7 @@ class StoryImageInfoStoreTests: XCTestCase {
         wait(for: [expectation1], timeout: 3)
 
         // Return nil when the website does not have og:image
-        let path2 = Bundle.main.path(forResource: "HTMLWithoutOgImage", ofType: "txt")!
+        let path2 = Bundle.main.path(forResource: "StoryImageInfoDataWithoutOgImage", ofType: "html")!
         let htmlWithoutOgImageInText = try! String(contentsOfFile: path2).data(using: .utf8)
         MockURLProtocol.stubResponseData = htmlWithoutOgImageInText
         let testStory2 = testStoryURLString + "2"
