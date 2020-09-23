@@ -12,7 +12,6 @@ import XCTest
 class StoryImageCacheTests: XCTestCase {
 
     var userDefaults: UserDefaults!
-    let key = "touchIcon"
 
     override func setUpWithError() throws {
         userDefaults = UserDefaults(suiteName: #file)
@@ -23,28 +22,28 @@ class StoryImageCacheTests: XCTestCase {
 
     func testInit() {
         setImageInfoForUserDefaults(numberOfInfo: 5)
-        let storyImageCache = StoryImageCache(userDefaults: self.userDefaults)
-        XCTAssertEqual(storyImageCache.imageInfos.count, 5)
+        let storyImageInfoCache = StoryImageInfoCache(userDefaults: self.userDefaults)
+        XCTAssertEqual(storyImageInfoCache.imageInfos.count, 5)
         for i in 1...5 {
-            XCTAssertEqual(storyImageCache.imageInfos["testStoryHost\(i)"]!.url, URL(string: "testURL\(i)"))
+            XCTAssertEqual(storyImageInfoCache.imageInfos["testStoryHost\(i)"]!.url, URL(string: "testURL\(i)"))
         }
     }
 
     func testAddStoryImageInfoAndDidEnterBackground() {
         let addedImageInfoHost = "AddedImageInfoHost"
         let addedImageInfoURL = "AddedImageInfoURL"
-        let storyImageCache = StoryImageCache(userDefaults: userDefaults)
-        XCTAssertEqual(storyImageCache.imageInfos.count, 0)
+        let storyImageInfoCache = StoryImageInfoCache(userDefaults: userDefaults)
+        XCTAssertEqual(storyImageInfoCache.imageInfos.count, 0)
 
         // Add storyImageInfo to StoryImageCache while not cached to UserDefaults.
-        storyImageCache.addStoryImageInfo(storyHost: addedImageInfoHost, storyImageInfo: StoryImageInfo(url: URL(string: addedImageInfoURL)!))
-        XCTAssertEqual(storyImageCache.imageInfos.count, 1)
-        XCTAssertEqual(storyImageCache.imageInfos[addedImageInfoHost]!.url, URL(string: addedImageInfoURL))
-        XCTAssertNil(userDefaults.data(forKey: StoryImageCache.key))
+        storyImageInfoCache.addStoryImageInfo(storyHost: addedImageInfoHost, storyImageInfo: StoryImageInfo(url: URL(string: addedImageInfoURL)!))
+        XCTAssertEqual(storyImageInfoCache.imageInfos.count, 1)
+        XCTAssertEqual(storyImageInfoCache.imageInfos[addedImageInfoHost]!.url, URL(string: addedImageInfoURL))
+        XCTAssertNil(userDefaults.data(forKey: StoryImageInfoCache.key))
 
         // storyImageInfo is cached when didEnterBackgroundNotification called.
         NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
-        let imageInfosInUserDefaults = try! JSONDecoder().decode([String: StoryImageInfo].self, from: userDefaults.data(forKey: self.key)!)
+        let imageInfosInUserDefaults = try! JSONDecoder().decode([String: StoryImageInfo].self, from: userDefaults.data(forKey: StoryImageInfoCache.key)!)
         XCTAssertEqual(imageInfosInUserDefaults.count, 1)
         XCTAssertEqual(imageInfosInUserDefaults[addedImageInfoHost]!.url, URL(string: addedImageInfoURL))
     }
@@ -59,6 +58,6 @@ extension StoryImageCacheTests {
             storyImageInfos[storyHost] = StoryImageInfo(url: URL(string: "testURL\(i)")!)
         }
         let encoded = try! JSONEncoder().encode(storyImageInfos)
-        userDefaults.set(encoded, forKey: key)
+        userDefaults.set(encoded, forKey: StoryImageInfoCache.key)
     }
 }

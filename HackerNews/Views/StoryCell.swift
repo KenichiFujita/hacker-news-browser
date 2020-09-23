@@ -123,7 +123,7 @@ class StoryCell: UITableViewCell {
         }
         vStack.replaceArrangedSubviews(with: [hostLabel, storyTitleLabel, storyInfoLabel].filter { $0.text != nil })
         if let storyURL = story.url, let host = URL(string: storyURL)?.host {
-            StoryImageInfoStore.shared.iconImageURL(url: storyURL, host: host) { (url) in
+            StoryImageInfoStore.shared.imageIconURL(url: storyURL, host: host) { (url) in
                 if let url = url {
                     self.setImage(url: url, story: story)
                 } else {

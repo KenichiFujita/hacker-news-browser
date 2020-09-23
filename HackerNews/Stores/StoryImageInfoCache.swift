@@ -9,11 +9,16 @@
 import Foundation
 import UIKit
 
-class StoryImageCache {
+protocol ImageInfoCacheProtocol {
+    var imageInfos: [String: StoryImageInfo] { get }
+    func addStoryImageInfo(storyHost: String, storyImageInfo: StoryImageInfo)
+}
+
+class StoryImageInfoCache: ImageInfoCacheProtocol {
 
     private var storyImageInfos: [String: StoryImageInfo] = [:]
     static var key: String {
-        return "touchIcon"
+        return "imageIcon"
     }
     private let userDefaults: UserDefaults
     private let notificationCenter = NotificationCenter.default
@@ -23,7 +28,7 @@ class StoryImageCache {
     
     init(userDefaults: UserDefaults = UserDefaults.standard) {
         self.userDefaults = userDefaults
-        if let cached = userDefaults.data(forKey: StoryImageCache.key),
+        if let cached = userDefaults.data(forKey: StoryImageInfoCache.key),
             let decoded = try? JSONDecoder().decode([String: StoryImageInfo].self, from: cached) {
                 self.storyImageInfos = decoded
         }
@@ -44,7 +49,7 @@ class StoryImageCache {
     
     private func save() {
         let converted = try? JSONEncoder().encode(storyImageInfos)
-        userDefaults.set(converted, forKey: StoryImageCache.key)
+        userDefaults.set(converted, forKey: StoryImageInfoCache.key)
     }
     
 }

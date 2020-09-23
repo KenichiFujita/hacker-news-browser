@@ -15,7 +15,7 @@ class StoryViewController: UIViewController {
     private let api = APIClient()
     private var commentSections: [[Comment]] = []
     private var headerImage: UIImage?
-    
+
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .systemBackground
@@ -57,7 +57,7 @@ class StoryViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         getComments(of: self.story)
-        ogImageURL(story) { (image) in
+        ogImage(story) { (image) in
             self.headerImage = image
             self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
         }
@@ -78,7 +78,7 @@ class StoryViewController: UIViewController {
         }
     }
     
-    private func ogImageURL(_ story: Story, completionHandler: @escaping (UIImage?) -> Void) {
+    private func ogImage(_ story: Story, completionHandler: @escaping (UIImage?) -> Void) {
         guard let url = story.url else {
             return completionHandler(nil)
         }
