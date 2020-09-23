@@ -14,18 +14,32 @@ class StoryImageInfoStore {
 
     static let shared = StoryImageInfoStore()
     private let queue = DispatchQueue.global(qos: .default)
-    private let storyImageCache = StoryImageCache()
-    
-    func iconImageURL(url: String, host: String, completionHandler: @escaping (URL?) -> Void) {
+    private let session: URLSession
+    private let storyImageInfoCache: ImageInfoCacheProtocol
+
+    init(session: URLSession = URLSession(configuration: .default), storyImageInfoCache: ImageInfoCacheProtocol = StoryImageInfoCache()) {
+        self.session = session
+        self.storyImageInfoCache = storyImageInfoCache
+    }
+
+    func imageIconURL(url: String, host: String, completionHandler: @escaping (URL?) -> Void) {
         queue.async {
-            if let cachedStoryImageInfo = self.storyImageCache.storyImageInfo(forKey: host) {
+            if let cachedStoryImageInfo = self.storyImageInfoCache.storyImageInfo(forKey: host) {
                 DispatchQueue.main.async {
                     completionHandler(cachedStoryImageInfo.touchIcon)
                 }
             } else {
                 self.imageInfo(url: url) { (storyImageInfo) in
-                    self.storyImageCache.add(storyImageInfo, forKey: host)
-                    completionHandler(storyImageInfo.touchIcon)
+                    guard let storyImageInfo = storyImageInfo else {
+                        DispatchQueue.main.async {
+                            completionHandler(nil)
+                        }
+                        return
+                    }
+                    self.storyImageInfoCache.add(storyImageInfo, forKey: host)
+                    DispatchQueue.main.async {
+                        completionHandler(storyImageInfo.touchIcon)
+                    }
                 }
             }
         }
@@ -34,42 +48,49 @@ class StoryImageInfoStore {
     func ogImageURL(url: String, completionHandler: @escaping (URL?) -> Void) {
         queue.async {
             self.imageInfo(url: url) { (storyImageInfo) in
-                completionHandler(storyImageInfo.ogImage)
+                guard let storyImageInfo = storyImageInfo else {
+                    DispatchQueue.main.async {
+                        completionHandler(nil)
+                    }
+                    return
+                }
+                DispatchQueue.main.async {
+                    completionHandler(storyImageInfo.ogImage)
+                }
             }
         }
     }
-    
-    private func imageInfo(url: String, completionHandler: @escaping (StoryImageInfo) -> Void) {
-        guard let url = URL(string: url) else { return }
+
+    private func imageInfo(url: String, completionHandler: @escaping (StoryImageInfo?) -> Void) {
+        guard let url = URL(string: url) else {
+            completionHandler(nil)
+            return
+        }
         var storyImageInfo = StoryImageInfo(url: url)
         self.html(url: url) { (html) in
             guard let html = html else {
-                DispatchQueue.main.async {
-                    completionHandler(storyImageInfo)
-                }
+                completionHandler(nil)
                 return
             }
             let document: Document? = try? SwiftSoup.parse(html, url.absoluteString)
             var elements: [Element] = []
             for node in [try? document?.select("head"), try? document?.select("body")].compactMap({ $0 }) {
-                guard let metaTags = try? node.select("meta").array(), let linkTags = try? node.select("link").array() else {
-                    return
+                if let metaTags = try? node.select("meta").array() {
+                    elements.append(contentsOf: metaTags)
                 }
-                elements.append(contentsOf: metaTags)
-                elements.append(contentsOf: linkTags)
-                let images = self.images(elements: elements)
-                for (key, (url, _)) in images {
-                    storyImageInfo.set(url, forkey: key)
+                if let linkTags = try? node.select("link").array() {
+                    elements.append(contentsOf: linkTags)
                 }
             }
-            DispatchQueue.main.async {
-                completionHandler(storyImageInfo)
+            let images = self.images(elements: elements)
+            for (key, (url, _)) in images {
+                storyImageInfo.set(url, forKey: key)
             }
+            completionHandler(storyImageInfo)
         }
     }
-    
+
     private func html(url: URL, completionHandler: @escaping (String?) -> Void) {
-        let session = URLSession(configuration: .default)
         session.dataTask(with: url) { data, response, error in
             guard let data = data,
                 let html = String(data:data, encoding: .utf8) else {
@@ -95,7 +116,7 @@ class StoryImageInfoStore {
         }
         return images
     }
-    
+
 }
 
 
@@ -107,8 +128,8 @@ struct StoryImageInfo: Codable {
     private var icon: URL?
     private var shortcutIcon: URL?
     var ogImage: URL?
-    
-    var touchIcon: URL? {
+
+    fileprivate var touchIcon: URL? {
         return appleTouchIconPrecomposed ?? appleTouchIcon ?? fluidIcon ?? icon ?? shortcutIcon ?? nil
     }
     
@@ -116,8 +137,8 @@ struct StoryImageInfo: Codable {
         self.url = url
     }
     
-    mutating func set(_ url: URL, forkey: String) {
-        switch forkey {
+    mutating func set(_ url: URL, forKey: String) {
+        switch forKey {
         case "apple-touch-icon-precomposed":
             appleTouchIconPrecomposed = url
         case "apple-touch-icon":
@@ -134,12 +155,12 @@ struct StoryImageInfo: Codable {
             return
         }
     }
-    
+
 
 }
 
 
-extension Element {
+private extension Element {
     var image: (key: String, url: URL, size: Int)? {
         if let key = try? attr("property"), let content = try? absUrl("content"), let url = URL(string: content) {
             return (key: key, url: url, size: 0)
