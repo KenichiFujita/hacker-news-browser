@@ -22,8 +22,14 @@ class StoryImageInfoStore {
         self.storyImageInfoCache = storyImageInfoCache
     }
 
-    func imageIconURL(url: String, host: String, completionHandler: @escaping (URL?) -> Void) {
+    func imageIconURL(for url: URL, completionHandler: @escaping (URL?) -> Void) {
         queue.async {
+            guard let host = url.host else {
+                DispatchQueue.main.async {
+                    completionHandler(nil)
+                }
+                return
+            }
             if let cachedStoryImageInfo = self.storyImageInfoCache.storyImageInfo(forKey: host) {
                 DispatchQueue.main.async {
                     completionHandler(cachedStoryImageInfo.touchIcon)
@@ -45,7 +51,7 @@ class StoryImageInfoStore {
         }
     }
     
-    func ogImageURL(url: String, completionHandler: @escaping (URL?) -> Void) {
+    func ogImageURL(url: URL, completionHandler: @escaping (URL?) -> Void) {
         queue.async {
             self.imageInfo(url: url) { (storyImageInfo) in
                 guard let storyImageInfo = storyImageInfo else {
@@ -61,11 +67,7 @@ class StoryImageInfoStore {
         }
     }
 
-    private func imageInfo(url: String, completionHandler: @escaping (StoryImageInfo?) -> Void) {
-        guard let url = URL(string: url) else {
-            completionHandler(nil)
-            return
-        }
+    private func imageInfo(url: URL, completionHandler: @escaping (StoryImageInfo?) -> Void) {
         var storyImageInfo = StoryImageInfo(url: url)
         self.html(url: url) { (html) in
             guard let html = html else {

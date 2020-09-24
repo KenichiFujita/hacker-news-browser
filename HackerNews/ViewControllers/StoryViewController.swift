@@ -79,7 +79,7 @@ class StoryViewController: UIViewController {
     }
     
     private func ogImage(_ story: Story, completionHandler: @escaping (UIImage?) -> Void) {
-        guard let url = story.url else {
+        guard let urlString = story.url, let url = URL(string: urlString) else {
             return completionHandler(nil)
         }
         StoryImageInfoStore.shared.ogImageURL(url: url) { (ogImageURL) in

@@ -22,11 +22,9 @@ class StoryImageCacheTests: XCTestCase {
 
     func testInit() {
         setImageInfoForUserDefaults(numberOfInfo: 5)
-
         let storyImageInfoCache = StoryImageInfoCache(userDefaults: self.userDefaults)
         for i in 1...5 {
             XCTAssertEqual(storyImageInfoCache.storyImageInfo(forKey: "testStoryHost\(i)")?.url, URL(string: "testURL\(i)"))
-
         }
     }
 

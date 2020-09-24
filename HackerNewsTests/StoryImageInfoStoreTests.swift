@@ -11,107 +11,129 @@ import XCTest
 
 class StoryImageInfoStoreTests: XCTestCase {
 
-    override func setUpWithError() throws { }
-
-    override func tearDownWithError() throws {
+    override func setUpWithError() throws {
         MockURLProtocol.stubResponseData = nil
         MockURLProtocol.error = nil
     }
 
-    func testImageIconURL() {
+    override func tearDownWithError() throws { }
+
+    func testImageIconURL_WhenSuccessfulHTMLProvidedAndCached() {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [MockURLProtocol.self]
         let session = URLSession(configuration: configuration)
         let storyImageInfoCache = MockStoryImageInfoCache()
         let storyImageInfoStore = StoryImageInfoStore(session: session, storyImageInfoCache: storyImageInfoCache)
-        let path = Bundle.main.path(forResource: "StoryImageInfoData", ofType: "html")!
-        let htmlInText = try! String(contentsOfFile: path).data(using: .utf8)
-        MockURLProtocol.stubResponseData = htmlInText
-        let testStoryURLString = "https://test.url.com/story_"
-        let testStory1 = testStoryURLString + "1"
-        let testStory2 = testStoryURLString + "2"
-        let expectation1 = XCTestExpectation()
-        let expectation2 = XCTestExpectation()
-        let expectation3 = XCTestExpectation()
-        let expectation4 = XCTestExpectation()
+        let testStoryURL = URL(string: "https://test.url.com/story")!
 
-        // Fetch imageIconURL that has not been cached
-        storyImageInfoStore.imageIconURL(url: testStory1, host: URL(string: testStory1)!.host!, completionHandler: { imageIconURL in
-            XCTAssertEqual(imageIconURL, URL(string: "https://test.url.com/apple-touch-icon-114x114-precomposed.png"))
-            XCTAssertEqual(storyImageInfoCache.storyImageInfo(forKey: URL(string: testStory1)!.host!)?.url, URL(string: testStory1))
-            XCTAssertEqual(Thread.isMainThread, true)
+        // Should return nil as there is no cached StoryImageInfo for key testStoryURL host and no htmlData is provided.
+        MockURLProtocol.error = NSError(domain: "", code: 0, userInfo: nil)
+        let expectation1 = XCTestExpectation()
+        storyImageInfoStore.imageIconURL(for: testStoryURL, completionHandler: { imageIconURL in
+            XCTAssertNil(imageIconURL)
+            XCTAssertNil(MockURLProtocol.stubResponseData)
+            XCTAssertNil(storyImageInfoCache.storyImageInfo(forKey: testStoryURL.host!))
             expectation1.fulfill()
         })
-        wait(for: [expectation1], timeout: 3)
+        wait(for: [expectation1], timeout: 1)
 
-        // Fetch imageIconURL that has been cached
-        storyImageInfoStore.imageIconURL(url: testStory2, host: URL(string: testStory2)!.host!, completionHandler: { imageIconURL in
-            XCTAssertEqual(imageIconURL, URL(string: "https://test.url.com/apple-touch-icon-114x114-precomposed.png"))
-            XCTAssertEqual(storyImageInfoCache.storyImageInfo(forKey: URL(string: testStory2)!.host!)?.url, URL(string: testStory1))
-            XCTAssertEqual(Thread.isMainThread, true)
+        // Fetch testStoryURL's imageIconURL from htmlData and cache it in StoryImageInfoCache.
+        let path = Bundle.main.path(forResource: "StoryImageInfoData", ofType: "html")!
+        let htmlData = try! String(contentsOfFile: path).data(using: .utf8)
+        MockURLProtocol.stubResponseData = htmlData
+        MockURLProtocol.error = nil
+        let testStoryTouchIconURL = URL(string: "https://test.url.com/apple-touch-icon-114x114-precomposed.png")!
+        let expectation2 = XCTestExpectation()
+        storyImageInfoStore.imageIconURL(for: testStoryURL, completionHandler: { imageIconURL in
+            XCTAssertEqual(imageIconURL, testStoryTouchIconURL)
             expectation2.fulfill()
         })
-        wait(for: [expectation2], timeout: 3)
+        self.wait(for: [expectation2], timeout: 1)
 
-        // Return nil when invalid url provided
-        storyImageInfoStore.imageIconURL(url: "invalidURL{}", host: "invalidURL{}Host", completionHandler: { imageIconURL in
-            XCTAssertNil(imageIconURL)
-            XCTAssertEqual(Thread.isMainThread, true)
+        // Should fetch imageIconURL from cache. If there is no cache, it should return nil as stubResponseData is nil.
+        MockURLProtocol.stubResponseData = nil
+        let expectation3 = XCTestExpectation()
+        storyImageInfoStore.imageIconURL(for: testStoryURL, completionHandler: { imageIconURL in
+            XCTAssertEqual(imageIconURL, testStoryTouchIconURL)
             expectation3.fulfill()
         })
-        wait(for: [expectation3], timeout: 3)
-
-        // Return nil when html() fail to fetch data
-        MockURLProtocol.error = NSError(domain: "", code: 0, userInfo: nil)
-        storyImageInfoStore.imageIconURL(url: "https://error.com", host: "error.com", completionHandler: { imageIconURL in
-            XCTAssertNil(imageIconURL)
-            XCTAssertEqual(Thread.isMainThread, true)
-            expectation4.fulfill()
-        })
-        wait(for: [expectation4], timeout: 3)
+        self.wait(for: [expectation3], timeout: 1)
     }
 
-    func testOgImageURL() {
+    func testImageIconURL_WhenURLHasInvalidHost() {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [MockURLProtocol.self]
         let session = URLSession(configuration: configuration)
         let storyImageInfoCache = MockStoryImageInfoCache()
         let storyImageInfoStore = StoryImageInfoStore(session: session, storyImageInfoCache: storyImageInfoCache)
-        let path1 = Bundle.main.path(forResource: "StoryImageInfoData", ofType: "html")!
-        let htmlWithOgImageInText = try! String(contentsOfFile: path1).data(using: .utf8)
-        MockURLProtocol.stubResponseData = htmlWithOgImageInText
-        let testStoryURLString = "https://test.url.com/story_"
-        let testStory1 = testStoryURLString + "1"
-        let expectation1 = XCTestExpectation()
+        let testStoryURLWithInvalidHost = URL(string: "testURLWithInvalidHost")!
 
-        // Return og:image URL when the website has og:image
-        storyImageInfoStore.ogImageURL(url: testStory1, completionHandler: { ogImageURL in
-            XCTAssertEqual(ogImageURL, URL(string: "https://www.test.url.com/images/ogimage.png"))
+        // Should return nil as invalid url host is provided
+        let expectation1 = XCTestExpectation()
+        storyImageInfoStore.imageIconURL(for: testStoryURLWithInvalidHost, completionHandler: { imageIconURL in
+            XCTAssertNil(imageIconURL)
             expectation1.fulfill()
         })
-        wait(for: [expectation1], timeout: 3)
+        wait(for: [expectation1], timeout: 1)
+    }
 
-        // Return nil when the website does not have og:image
-        let path2 = Bundle.main.path(forResource: "StoryImageInfoDataWithoutOgImage", ofType: "html")!
-        let htmlWithoutOgImageInText = try! String(contentsOfFile: path2).data(using: .utf8)
-        MockURLProtocol.stubResponseData = htmlWithoutOgImageInText
-        let testStory2 = testStoryURLString + "2"
-        let expectation2 = XCTestExpectation()
-        storyImageInfoStore.ogImageURL(url: testStory2, completionHandler: { ogImageURL in
-            XCTAssertNil(ogImageURL)
-            expectation2.fulfill()
+    func testOgImage_WhenSuccessfulHTMLProvided() {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [MockURLProtocol.self]
+        let session = URLSession(configuration: configuration)
+        let storyImageInfoCache = MockStoryImageInfoCache()
+        let storyImageInfoStore = StoryImageInfoStore(session: session, storyImageInfoCache: storyImageInfoCache)
+        let testStoryURL = URL(string: "https://test.url.com/story")!
+        let path = Bundle.main.path(forResource: "StoryImageInfoData", ofType: "html")!
+        let htmlData = try! String(contentsOfFile: path).data(using: .utf8)
+        MockURLProtocol.stubResponseData = htmlData
+        let stubbedOgImageURL = URL(string: "https://www.test.url.com/images/ogimage.png")
+        let expectation = XCTestExpectation()
+
+        // Should fetch ogImageURL
+        storyImageInfoStore.ogImageURL(url: testStoryURL, completionHandler: { ogImageURL in
+            XCTAssertEqual(ogImageURL, stubbedOgImageURL)
+            expectation.fulfill()
         })
-        wait(for: [expectation2], timeout: 3)
+        wait(for: [expectation], timeout: 1)
+    }
 
-        // Return nil when html() fails to fetch data
-        let testStory3 = testStoryURLString + "3"
-        let expectation3 = XCTestExpectation()
+    func testOgImage_WhenInvalidHTMLProvided() {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [MockURLProtocol.self]
+        let session = URLSession(configuration: configuration)
+        let storyImageInfoCache = MockStoryImageInfoCache()
+        let storyImageInfoStore = StoryImageInfoStore(session: session, storyImageInfoCache: storyImageInfoCache)
+        let testStoryURL = URL(string: "https://test.url.com/story")!
         MockURLProtocol.error = NSError(domain: "", code: 0, userInfo: nil)
-        storyImageInfoStore.ogImageURL(url: testStory3, completionHandler: { ogImageURL in
+        let expectation = XCTestExpectation()
+
+        // Should return nil
+        storyImageInfoStore.ogImageURL(url: testStoryURL, completionHandler: { ogImageURL in
             XCTAssertNil(ogImageURL)
-            expectation3.fulfill()
+            expectation.fulfill()
         })
-        wait(for: [expectation3], timeout: 3)
+        wait(for: [expectation], timeout: 1)
+    }
+
+    func testOgImage_WhenHTMLDoesNotHaveOgImage() {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [MockURLProtocol.self]
+        let session = URLSession(configuration: configuration)
+        let storyImageInfoCache = MockStoryImageInfoCache()
+        let storyImageInfoStore = StoryImageInfoStore(session: session, storyImageInfoCache: storyImageInfoCache)
+        let testStoryURL = URL(string: "https://test.url.com/story")!
+        let path = Bundle.main.path(forResource: "StoryImageInfoDataWithoutOgImage", ofType: "html")!
+        let htmlData = try! String(contentsOfFile: path).data(using: .utf8)
+        MockURLProtocol.stubResponseData = htmlData
+        let expectation = XCTestExpectation()
+
+        // Should return nil
+        storyImageInfoStore.ogImageURL(url: testStoryURL, completionHandler: { ogImageURL in
+            XCTAssertNil(ogImageURL)
+            expectation.fulfill()
+        })
+        wait(for: [expectation], timeout: 1)
     }
 
 }
