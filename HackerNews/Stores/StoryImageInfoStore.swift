@@ -18,14 +18,14 @@ class StoryImageInfoStore {
     
     func iconImageURL(url: String, host: String, completionHandler: @escaping (URL?) -> Void) {
         queue.async {
-            if let cachedStoryImageInfo = self.storyImageCache.imageInfos[host] {
+            if let cachedStoryImageInfo = self.storyImageCache.storyImageInfo(forKey: host) {
                 DispatchQueue.main.async {
                     completionHandler(cachedStoryImageInfo.touchIcon)
                 }
             } else {
-                self.imageInfo(url: url) { (storyImageinfo) in
-                    self.storyImageCache.addStoryImageInfo(storyHost: host, storyImageInfo: storyImageinfo)
-                    completionHandler(storyImageinfo.touchIcon)
+                self.imageInfo(url: url) { (storyImageInfo) in
+                    self.storyImageCache.add(storyImageInfo, forKey: host)
+                    completionHandler(storyImageInfo.touchIcon)
                 }
             }
         }

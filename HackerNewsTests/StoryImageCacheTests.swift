@@ -24,9 +24,8 @@ class StoryImageCacheTests: XCTestCase {
     func testInit() {
         setImageInfoForUserDefaults(numberOfInfo: 5)
         let storyImageCache = StoryImageCache(userDefaults: self.userDefaults)
-        XCTAssertEqual(storyImageCache.imageInfos.count, 5)
         for i in 1...5 {
-            XCTAssertEqual(storyImageCache.imageInfos["testStoryHost\(i)"]!.url, URL(string: "testURL\(i)"))
+            XCTAssertEqual(storyImageCache.storyImageInfo(forKey: "testStoryHost\(i)")?.url, URL(string: "testURL\(i)"))
         }
     }
 
@@ -34,12 +33,10 @@ class StoryImageCacheTests: XCTestCase {
         let addedImageInfoHost = "AddedImageInfoHost"
         let addedImageInfoURL = "AddedImageInfoURL"
         let storyImageCache = StoryImageCache(userDefaults: userDefaults)
-        XCTAssertEqual(storyImageCache.imageInfos.count, 0)
 
         // Add storyImageInfo to StoryImageCache while not cached to UserDefaults.
-        storyImageCache.addStoryImageInfo(storyHost: addedImageInfoHost, storyImageInfo: StoryImageInfo(url: URL(string: addedImageInfoURL)!))
-        XCTAssertEqual(storyImageCache.imageInfos.count, 1)
-        XCTAssertEqual(storyImageCache.imageInfos[addedImageInfoHost]!.url, URL(string: addedImageInfoURL))
+        storyImageCache.add(StoryImageInfo(url: URL(string: addedImageInfoURL)!), forKey: addedImageInfoHost)
+        XCTAssertEqual(storyImageCache.storyImageInfo(forKey: addedImageInfoHost)?.url, URL(string: addedImageInfoURL))
         XCTAssertNil(userDefaults.data(forKey: StoryImageCache.key))
 
         // storyImageInfo is cached when didEnterBackgroundNotification called.

@@ -17,9 +17,6 @@ class StoryImageCache {
     }
     private let userDefaults: UserDefaults
     private let notificationCenter = NotificationCenter.default
-    var imageInfos: [String: StoryImageInfo] {
-        return storyImageInfos
-    }
     
     init(userDefaults: UserDefaults = UserDefaults.standard) {
         self.userDefaults = userDefaults
@@ -34,8 +31,12 @@ class StoryImageCache {
         notificationCenter.removeObserver(self)
     }
     
-    func addStoryImageInfo(storyHost: String, storyImageInfo: StoryImageInfo) {
-        storyImageInfos[storyHost] = storyImageInfo
+    func add(_ storyImageInfo: StoryImageInfo, forKey key: String) {
+        storyImageInfos[key] = storyImageInfo
+    }
+
+    func storyImageInfo(forKey key: String) -> StoryImageInfo? {
+        return storyImageInfos[key]
     }
     
     @objc func didEnterBackground() {
