@@ -184,8 +184,8 @@
 			children = (
 				227CF53223C57731000D2A52 /* MainTabBarController.swift */,
 				228AA6F52381B0C600B4D512 /* StoriesViewController.swift */,
-				2249FF2B2395E31B007FDCF2 /* StoryViewController.swift */,
 				22466EB0242987370012636F /* SearchViewController.swift */,
+				2249FF2B2395E31B007FDCF2 /* StoryViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";

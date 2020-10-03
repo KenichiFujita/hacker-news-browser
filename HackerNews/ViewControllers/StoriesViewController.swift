@@ -99,8 +99,13 @@ class StoriesViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationItem.title = title
     }
-    
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationItem.title = ""
+    }
     
     @objc func fetchItems() {
         viewModel.load()
@@ -130,7 +135,7 @@ extension StoriesViewController: UITableViewDelegate, UITableViewDataSource {
         if let url = story.url {
             showSafariViewController(for: url)
         } else {
-            navigationController?.pushViewController(StoryViewController(story), animated: true)
+            navigationController?.pushViewController(StoryViewController(story, viewModel.favoritesStore), animated: true)
         }
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -187,7 +192,7 @@ extension StoriesViewController: StoryCellDelegate {
             return
         }
         let story = viewModel.stories[indexPath.row]
-        let storyViewController = StoryViewController(story)
+        let storyViewController = StoryViewController(story, viewModel.favoritesStore)
         navigationController?.pushViewController(storyViewController, animated: true)
     }
     

@@ -15,6 +15,7 @@ class StoryViewController: UIViewController {
     private let api = APIClient()
     private var commentSections: [[Comment]] = []
     private var headerImage: UIImage?
+    private let favoritesStore: FavoritesStore
 
     private let tableView: UITableView = {
         let tableView = UITableView()
@@ -29,8 +30,9 @@ class StoryViewController: UIViewController {
     }()
 
 
-    init(_ story: Story) {
+    init(_ story: Story, _ favoritesStore: FavoritesStore) {
         self.story = story
+        self.favoritesStore = favoritesStore
         super.init(nibName: nil, bundle: nil)
     }
     
