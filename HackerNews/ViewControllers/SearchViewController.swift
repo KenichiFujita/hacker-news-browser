@@ -13,11 +13,7 @@ class SearchViewController: UIViewController {
     
     let api = APIClient()
     var viewModel: SearchViewModel
-    var stories: [Story] = [] {
-        didSet {
-            tableView.reloadData()
-        }
-    }
+    var stories: [Story] = []
     
     init(viewModel: SearchViewModel, title: String) {
         self.viewModel = viewModel

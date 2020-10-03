@@ -10,13 +10,27 @@ import UIKit
 import SafariServices
 import Kingfisher
 
+private enum StarIcon {
+    case favorite
+    case notFavorite
+
+    var image: UIImage? {
+        switch self {
+        case .favorite:
+            return UIImage(systemName: "star.fill")
+        case .notFavorite:
+            return UIImage(systemName: "star")
+        }
+    }
+}
+
 class StoryViewController: UIViewController {
     private let story: Story
     private let api = APIClient()
     private var commentSections: [[Comment]] = []
     private var headerImage: UIImage?
     private let favoritesStore: FavoritesStore
-
+    private var favoritesBarButton: UIBarButtonItem?
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .systemBackground
@@ -29,7 +43,6 @@ class StoryViewController: UIViewController {
         return tableView
     }()
 
-
     init(_ story: Story, _ favoritesStore: FavoritesStore) {
         self.story = story
         self.favoritesStore = favoritesStore
@@ -39,12 +52,16 @@ class StoryViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    deinit {
+        favoritesStore.removeObserver(self)
+    }
     
     override func loadView() {
         super.loadView()
 
-        navigationItem.largeTitleDisplayMode = .never
         view.addSubview(tableView)
+
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint                      (equalTo: view.topAnchor),
             tableView.trailingAnchor.constraint                 (equalTo: view.trailingAnchor),
@@ -55,13 +72,22 @@ class StoryViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         tableView.delegate = self
         tableView.dataSource = self
+        favoritesStore.addObserver(self)
         getComments(of: self.story)
         ogImage(story) { (image) in
             self.headerImage = image
             self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
+        }
+        navigationItem.largeTitleDisplayMode = .never
+        favoritesBarButton = UIBarButtonItem(image: favoritesStore.has(story: story.id) ? StarIcon.favorite.image : StarIcon.notFavorite.image,
+                                             style: .plain,
+                                             target: self,
+                                             action: #selector(favoritesBarButtonTapped))
+        if let favoritesBarButton = favoritesBarButton {
+            navigationItem.rightBarButtonItems = [favoritesBarButton]
         }
     }
     
@@ -92,6 +118,19 @@ class StoryViewController: UIViewController {
                     }
                 }
             }
+        }
+    }
+
+    @objc func favoritesBarButtonTapped() {
+        guard let favoritesBarButton = favoritesBarButton else {
+            return
+        }
+        if favoritesStore.has(story: story.id) {
+            favoritesStore.remove(storyId: story.id)
+            favoritesBarButton.image = StarIcon.notFavorite.image
+        } else {
+            favoritesStore.add(storyId: story.id)
+            favoritesBarButton.image = StarIcon.favorite.image
         }
     }
 
@@ -171,4 +210,15 @@ extension StoryViewController: CommentCellDelegate {
     private func showSafariViewController(for url: URL) {
         present(SFSafariViewController(url: url), animated: true)
     }
+}
+
+extension StoryViewController: FavoriteStoreObserver {
+
+    func favoriteStoreUpdated(_ store: FavoritesStore) {
+        guard let favoritesBarButton = favoritesBarButton else {
+            return
+        }
+        favoritesBarButton.image = favoritesStore.has(story: story.id) ? StarIcon.favorite.image : StarIcon.notFavorite.image
+    }
+
 }
