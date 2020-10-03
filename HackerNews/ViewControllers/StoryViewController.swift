@@ -27,8 +27,8 @@ class StoryViewController: UIViewController {
         tableView.register(StoryViewHeaderCell.self, forCellReuseIdentifier: "StoryViewHeaderCell")
         return tableView
     }()
-    
-    
+
+
     init(_ story: Story) {
         self.story = story
         super.init(nibName: nil, bundle: nil)
@@ -40,7 +40,7 @@ class StoryViewController: UIViewController {
     
     override func loadView() {
         super.loadView()
-        
+
         navigationItem.largeTitleDisplayMode = .never
         view.addSubview(tableView)
         NSLayoutConstraint.activate([
@@ -92,7 +92,7 @@ class StoryViewController: UIViewController {
             }
         }
     }
-    
+
 }
 
 extension StoryViewController: UITableViewDelegate, UITableViewDataSource {

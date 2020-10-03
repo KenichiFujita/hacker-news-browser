@@ -12,13 +12,15 @@ import SafariServices
 class SearchViewController: UIViewController {
     
     let api = APIClient()
+    var viewModel: SearchViewModel
     var stories: [Story] = [] {
         didSet {
-            instructionView.isHidden = stories.count != 0
+            tableView.reloadData()
         }
     }
     
-    init(title: String) {
+    init(viewModel: SearchViewModel, title: String) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         self.title = title
     }
@@ -36,7 +38,7 @@ class SearchViewController: UIViewController {
         return tableView
     }()
     
-    let instructionLabel: UILabel = {
+    private let instructionLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
@@ -44,17 +46,34 @@ class SearchViewController: UIViewController {
         label.textColor = .systemGray
         label.text = "Search stories and results to show up here"
         label.textAlignment = .center
+        label.backgroundColor = .systemBackground
         return label
     }()
-    
-    let instructionView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .systemBackground
-        return view
+
+    private let emptyLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        label.font = .preferredFont(forTextStyle: .title3)
+        label.textColor = .systemGray
+        label.text = "No stories found"
+        label.textAlignment = .center
+        label.backgroundColor = .systemBackground
+        return label
     }()
 
-    
+    private let errorLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        label.font = .preferredFont(forTextStyle: .title3)
+        label.textColor = .systemGray
+        label.text = "Sorry. Something went wrong..."
+        label.textAlignment = .center
+        label.backgroundColor = .systemBackground
+        return label
+    }()
+
     private let searchController: UISearchController = {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.obscuresBackgroundDuringPresentation = false
@@ -63,10 +82,13 @@ class SearchViewController: UIViewController {
 
     override func loadView() {
         super.loadView()
-        
+
+        view.backgroundColor = .systemBackground
+
         view.addSubview(tableView)
-        view.addSubview(instructionView)
-        instructionView.addSubview(instructionLabel)
+        view.addSubview(instructionLabel)
+        view.addSubview(emptyLabel)
+        view.addSubview(errorLabel)
         
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -74,14 +96,12 @@ class SearchViewController: UIViewController {
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            instructionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            instructionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            instructionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            instructionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            
-            instructionLabel.centerYAnchor.constraint(equalTo: instructionView.centerYAnchor),
-            instructionLabel.leadingAnchor.constraint(equalTo: instructionView.leadingAnchor, constant: 100),
-            instructionLabel.trailingAnchor.constraint(equalTo: instructionView.trailingAnchor, constant: -100)
+            instructionLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            instructionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            emptyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            errorLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ])
     }
     
@@ -92,17 +112,8 @@ class SearchViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         searchController.searchBar.delegate = self
-    }
-    
-    func searchStories(searchWord: String) {
-        api.searchStories(searchText: searchWord) { (result) in
-            if case .success(let stories) = result {
-                self.stories = stories
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
-            }
-        }
+        viewModel.outputs.delegate = self
+        viewModel.inputs.viewDidLoad()
     }
     
 }
@@ -150,7 +161,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
 extension SearchViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        searchStories(searchWord: searchText)
+        viewModel.inputs.searchTextDidChange(searchText)
     }
 }
 
@@ -165,4 +176,23 @@ extension SearchViewController: StoryCellDelegate {
         navigationController?.pushViewController(storyViewController, animated: true)
     }
     
+}
+
+extension SearchViewController: SearchViewModelDelegate {
+
+    func show(tableView shouldShowTableView: Bool,
+              instructionLabel shouldShowInstructionLabel: Bool,
+              emptyLabel shouldShowEmptyLabel: Bool,
+              errorLabel shouldShowErrorLabel: Bool) {
+        tableView.isHidden = !shouldShowTableView
+        instructionLabel.isHidden = !shouldShowInstructionLabel
+        emptyLabel.isHidden = !shouldShowEmptyLabel
+        errorLabel.isHidden = !shouldShowErrorLabel
+    }
+
+    func reload(with stories: [Story]) {
+        self.stories = stories
+        tableView.reloadData()
+    }
+
 }

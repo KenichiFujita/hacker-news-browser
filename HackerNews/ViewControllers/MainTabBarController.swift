@@ -58,7 +58,7 @@ class MainTabBarController: UITabBarController {
     }
     
     private func searchNavigationController(navigationBarTitle: String) -> UINavigationController {
-        let searchViewController = SearchViewController(title: navigationBarTitle)
+        let searchViewController = SearchViewController(viewModel: SearchViewModel(favoritesStore: favoritesStore), title: navigationBarTitle)
         let navigationController = UINavigationController(rootViewController: searchViewController)
         navigationController.tabBarItem.title = "Search"
         navigationController.tabBarItem.image = UIImage(systemName: "magnifyingglass")
