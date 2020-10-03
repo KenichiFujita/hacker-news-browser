@@ -37,7 +37,7 @@ class StoryCell: UITableViewCell {
         return label
     }()
     
-    private let commentButton: UIButton = {
+    private let balloonCommentButton: UIButton = {
         let commentButton = UIButton(type: .custom)
         commentButton.setTitleColor(.label, for: .normal)
         commentButton.titleLabel?.font = UIFont.systemFont(ofSize: 10)
@@ -46,7 +46,14 @@ class StoryCell: UITableViewCell {
         let commentButtonImage = UIImage(named: "commentButtonImage")?.withRenderingMode(.alwaysTemplate)
         commentButton.tintColor = .label
         commentButton.setBackgroundImage(commentButtonImage, for: .normal)
+        commentButton.isUserInteractionEnabled = false
         return commentButton
+    }()
+
+    private let tappableCommentButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     
     public let faviconImageView: UIImageView = {
@@ -85,25 +92,30 @@ class StoryCell: UITableViewCell {
         stackView.alignment = .center
         stackView.axis = .horizontal
         stackView.spacing = 12
+        stackView.isUserInteractionEnabled = false
         return stackView
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.backgroundColor = UIColor.systemBackground
+        contentView.addSubview(tappableCommentButton)
         contentView.addSubview(hStack)
-        
         hStack.addArrangedSubview(faviconImageView)
         hStack.addArrangedSubview(vStack)
-        hStack.addArrangedSubview(commentButton)
-        
-        commentButton.addTarget(self, action: #selector(commentButtonTapped(_:)), for: .touchUpInside)
+        hStack.addArrangedSubview(balloonCommentButton)
+        tappableCommentButton.addTarget(self, action: #selector(commentButtonTapped(_:)), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
             hStack.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
             hStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             hStack.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
             hStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+
+            tappableCommentButton.topAnchor.constraint(equalTo: topAnchor),
+            tappableCommentButton.bottomAnchor.constraint(equalTo: bottomAnchor),
+            tappableCommentButton.trailingAnchor.constraint(equalTo: trailingAnchor),
+            tappableCommentButton.leadingAnchor.constraint(equalTo: balloonCommentButton.leadingAnchor, constant: -12),
         ])
         
     }
@@ -117,7 +129,7 @@ class StoryCell: UITableViewCell {
         self.story = story
         storyInfoLabel.text = story.info
         storyTitleLabel.text = story.title
-        commentButton.setTitle(String(story.descendants), for: .normal)
+        balloonCommentButton.setTitle(String(story.descendants), for: .normal)
         if let storyURL = story.url {
             hostLabel.text = URL(string: storyURL)?.hostWithoutWWW
         }
@@ -162,7 +174,7 @@ class StoryCell: UITableViewCell {
         
         storyInfoLabel.text = nil
         storyTitleLabel.text = nil
-        commentButton.setTitle(nil, for: .normal)
+        balloonCommentButton.setTitle(nil, for: .normal)
         faviconImageView.image = nil
         hostLabel.text = nil
     }
