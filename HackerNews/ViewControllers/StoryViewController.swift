@@ -10,27 +10,13 @@ import UIKit
 import SafariServices
 import Kingfisher
 
-private enum StarIcon {
-    case favorite
-    case notFavorite
-
-    var image: UIImage? {
-        switch self {
-        case .favorite:
-            return UIImage(systemName: "star.fill")
-        case .notFavorite:
-            return UIImage(systemName: "star")
-        }
-    }
-}
-
 class StoryViewController: UIViewController {
     private let story: Story
     private let api = APIClient()
     private var commentSections: [[Comment]] = []
     private var headerImage: UIImage?
     private let favoritesStore: FavoritesStore
-    private var favoritesBarButton: UIBarButtonItem?
+    private var favoritesBarButton: FavoritesBarButton?
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .systemBackground
@@ -82,10 +68,11 @@ class StoryViewController: UIViewController {
             self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
         }
         navigationItem.largeTitleDisplayMode = .never
-        favoritesBarButton = UIBarButtonItem(image: favoritesStore.has(story: story.id) ? StarIcon.favorite.image : StarIcon.notFavorite.image,
-                                             style: .plain,
-                                             target: self,
-                                             action: #selector(favoritesBarButtonTapped))
+        favoritesBarButton = FavoritesBarButton()
+        favoritesBarButton?.inFavorites = favoritesStore.has(story: story.id)
+        favoritesBarButton?.style = .plain
+        favoritesBarButton?.target = self
+        favoritesBarButton?.action = #selector(favoritesBarButtonTapped)
         if let favoritesBarButton = favoritesBarButton {
             navigationItem.rightBarButtonItems = [favoritesBarButton]
         }
@@ -125,12 +112,11 @@ class StoryViewController: UIViewController {
         guard let favoritesBarButton = favoritesBarButton else {
             return
         }
+        favoritesBarButton.inFavorites = !favoritesStore.has(story: story.id)
         if favoritesStore.has(story: story.id) {
             favoritesStore.remove(storyId: story.id)
-            favoritesBarButton.image = StarIcon.notFavorite.image
         } else {
             favoritesStore.add(storyId: story.id)
-            favoritesBarButton.image = StarIcon.favorite.image
         }
     }
 
@@ -218,7 +204,25 @@ extension StoryViewController: FavoriteStoreObserver {
         guard let favoritesBarButton = favoritesBarButton else {
             return
         }
-        favoritesBarButton.image = favoritesStore.has(story: story.id) ? StarIcon.favorite.image : StarIcon.notFavorite.image
+        favoritesBarButton.inFavorites = favoritesStore.has(story: story.id)
+    }
+
+}
+
+class FavoritesBarButton: UIBarButtonItem {
+
+    var inFavorites: Bool = true {
+        didSet {
+            image = inFavorites ? UIImage(systemName: "star.fill") : UIImage(systemName: "star")
+        }
+    }
+
+    override init() {
+        super.init()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
 }

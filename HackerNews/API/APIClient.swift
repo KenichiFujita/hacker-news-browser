@@ -27,7 +27,7 @@ private enum API {
         case .ids(let queryType):
             return URL(string: "https://hacker-news.firebaseio.com/v0/\(queryType.rawValue)stories.json")
         case .searchStories(let searchText):
-            return URL(string: "http://hn.algolia.com/api/v1/search?query=\(searchText)&tags=story")
+                return URL(string: "http://hn.algolia.com/api/v1/search?query=\(searchText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&tags=story")
         case .comment(let id):
             return URL(string: "http://hn.algolia.com/api/v1/items/\(id)")
         }

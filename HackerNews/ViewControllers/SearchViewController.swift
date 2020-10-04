@@ -10,8 +10,7 @@ import UIKit
 import SafariServices
 
 class SearchViewController: UIViewController {
-    
-    let api = APIClient()
+
     var viewModel: SearchViewModel
     var stories: [Story] = []
     
@@ -34,37 +33,12 @@ class SearchViewController: UIViewController {
         return tableView
     }()
     
-    private let instructionLabel: UILabel = {
+    private let informationLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         label.font = .preferredFont(forTextStyle: .title3)
-        label.textColor = .systemGray
-        label.text = "Search stories and results to show up here"
-        label.textAlignment = .center
-        label.backgroundColor = .systemBackground
-        return label
-    }()
-
-    private let emptyLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.numberOfLines = 0
-        label.font = .preferredFont(forTextStyle: .title3)
-        label.textColor = .systemGray
-        label.text = "No stories found"
-        label.textAlignment = .center
-        label.backgroundColor = .systemBackground
-        return label
-    }()
-
-    private let errorLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.numberOfLines = 0
-        label.font = .preferredFont(forTextStyle: .title3)
-        label.textColor = .systemGray
-        label.text = "Sorry. Something went wrong..."
+        label.textColor = .secondaryLabel
         label.textAlignment = .center
         label.backgroundColor = .systemBackground
         return label
@@ -80,24 +54,16 @@ class SearchViewController: UIViewController {
         super.loadView()
 
         view.backgroundColor = .systemBackground
-
         view.addSubview(tableView)
-        view.addSubview(instructionLabel)
-        view.addSubview(emptyLabel)
-        view.addSubview(errorLabel)
+        view.addSubview(informationLabel)
         
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
-            instructionLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            instructionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            emptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            emptyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            errorLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            informationLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            informationLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
     
@@ -176,14 +142,13 @@ extension SearchViewController: StoryCellDelegate {
 
 extension SearchViewController: SearchViewModelDelegate {
 
-    func show(tableView shouldShowTableView: Bool,
-              instructionLabel shouldShowInstructionLabel: Bool,
-              emptyLabel shouldShowEmptyLabel: Bool,
-              errorLabel shouldShowErrorLabel: Bool) {
+    func show(tableView shouldShowTableView: Bool, informationLabel shouldShowInformationLabel: Bool) {
         tableView.isHidden = !shouldShowTableView
-        instructionLabel.isHidden = !shouldShowInstructionLabel
-        emptyLabel.isHidden = !shouldShowEmptyLabel
-        errorLabel.isHidden = !shouldShowErrorLabel
+        informationLabel.isHidden = !shouldShowInformationLabel
+    }
+
+    func update(informationText: String) {
+        informationLabel.text = informationText
     }
 
     func reload(with stories: [Story]) {
