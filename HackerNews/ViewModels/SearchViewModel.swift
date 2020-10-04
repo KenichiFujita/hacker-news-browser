@@ -36,15 +36,9 @@ class SearchViewModel: SearchViewModelType, SearchViewModelOutputs {
     var delegate: SearchViewModelDelegate?
     var favoritesStore: FavoritesStore
     private let api: APIClient
-    private var instructionText: String {
-        return "Search stories and results to show up here"
-    }
-    private var emptyText: String {
-        return "No stories found"
-    }
-    private var errorText: String {
-        return "Sorry. Something went wrong..."
-    }
+    static let instructionText = "Search stories and results to show up here"
+    static let emptyText = "No stories found"
+    static let errorText = "Sorry. Something went wrong..."
 
     init(favoritesStore: FavoritesStore, api: APIClient = APIClient()) {
         self.favoritesStore = favoritesStore
@@ -56,7 +50,7 @@ class SearchViewModel: SearchViewModelType, SearchViewModelOutputs {
 extension SearchViewModel: SearchViewModelInputs {
 
     func viewDidLoad() {
-        delegate?.update(informationText: instructionText)
+        delegate?.update(informationText: SearchViewModel.instructionText)
         delegate?.show(tableView: false, informationLabel: true)
     }
 
@@ -66,7 +60,7 @@ extension SearchViewModel: SearchViewModelInputs {
 
             if searchText == "" {
                 self.delegate?.reload(with: [])
-                self.delegate?.update(informationText: self.instructionText)
+                self.delegate?.update(informationText: SearchViewModel.instructionText)
                 self.delegate?.show(tableView: false, informationLabel: true)
                 return
             }
@@ -75,18 +69,15 @@ extension SearchViewModel: SearchViewModelInputs {
                 switch result {
                 case .success(let stories):
                     self.delegate?.reload(with: stories)
-                    self.delegate?.update(informationText: self.emptyText)
+                    self.delegate?.update(informationText: SearchViewModel.emptyText)
                     self.delegate?.show(tableView: stories.count > 0, informationLabel: stories.count == 0)
                 case .failure(let error):
-                    switch error {
-                    case APIClientError.invalidURL,
-                         APIClientError.unkonwnError,
-                         APIClientError.decodingError:
-                        self.delegate?.reload(with: [])
-                        self.delegate?.update(informationText: self.errorText)
-                        self.delegate?.show(tableView: false, informationLabel: true)
-                    case APIClientError.domainError:
+                    if error == APIClientError.sessionTaskCancelled {
                         break
+                    } else {
+                        self.delegate?.reload(with: [])
+                        self.delegate?.update(informationText: SearchViewModel.errorText)
+                        self.delegate?.show(tableView: false, informationLabel: true)
                     }
                 }
             }

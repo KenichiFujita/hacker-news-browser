@@ -135,7 +135,7 @@ extension StoriesViewController: UITableViewDelegate, UITableViewDataSource {
         if let url = story.url {
             showSafariViewController(for: url)
         } else {
-            navigationController?.pushViewController(StoryViewController(story, viewModel.favoritesStore), animated: true)
+            navigationController?.pushViewController(StoryViewController(story: story, favoritesStore: viewModel.favoritesStore), animated: true)
         }
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -192,7 +192,7 @@ extension StoriesViewController: StoryCellDelegate {
             return
         }
         let story = viewModel.stories[indexPath.row]
-        let storyViewController = StoryViewController(story, viewModel.favoritesStore)
+        let storyViewController = StoryViewController(story: story, favoritesStore: viewModel.favoritesStore)
         navigationController?.pushViewController(storyViewController, animated: true)
     }
     

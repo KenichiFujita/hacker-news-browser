@@ -16,7 +16,7 @@ class StoryViewController: UIViewController {
     private var commentSections: [[Comment]] = []
     private var headerImage: UIImage?
     private let favoritesStore: FavoritesStore
-    private var favoritesBarButton: FavoritesBarButton?
+    private let favoritesBarButtonItem = FavoritesBarButtonItem()
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .systemBackground
@@ -29,7 +29,7 @@ class StoryViewController: UIViewController {
         return tableView
     }()
 
-    init(_ story: Story, _ favoritesStore: FavoritesStore) {
+    init(story: Story, favoritesStore: FavoritesStore) {
         self.story = story
         self.favoritesStore = favoritesStore
         super.init(nibName: nil, bundle: nil)
@@ -68,14 +68,10 @@ class StoryViewController: UIViewController {
             self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
         }
         navigationItem.largeTitleDisplayMode = .never
-        favoritesBarButton = FavoritesBarButton()
-        favoritesBarButton?.inFavorites = favoritesStore.has(story: story.id)
-        favoritesBarButton?.style = .plain
-        favoritesBarButton?.target = self
-        favoritesBarButton?.action = #selector(favoritesBarButtonTapped)
-        if let favoritesBarButton = favoritesBarButton {
-            navigationItem.rightBarButtonItems = [favoritesBarButton]
-        }
+        favoritesBarButtonItem.inFavorites = favoritesStore.has(story: story.id)
+        favoritesBarButtonItem.target = self
+        favoritesBarButtonItem.action = #selector(favoritesBarButtonTapped)
+        navigationItem.rightBarButtonItems = [favoritesBarButtonItem]
     }
     
     private func getComments(of story: Story) {
@@ -109,14 +105,12 @@ class StoryViewController: UIViewController {
     }
 
     @objc func favoritesBarButtonTapped() {
-        guard let favoritesBarButton = favoritesBarButton else {
-            return
-        }
-        favoritesBarButton.inFavorites = !favoritesStore.has(story: story.id)
         if favoritesStore.has(story: story.id) {
             favoritesStore.remove(storyId: story.id)
+            favoritesBarButtonItem.inFavorites = false
         } else {
             favoritesStore.add(storyId: story.id)
+            favoritesBarButtonItem.inFavorites = true
         }
     }
 
@@ -201,28 +195,17 @@ extension StoryViewController: CommentCellDelegate {
 extension StoryViewController: FavoriteStoreObserver {
 
     func favoriteStoreUpdated(_ store: FavoritesStore) {
-        guard let favoritesBarButton = favoritesBarButton else {
-            return
-        }
-        favoritesBarButton.inFavorites = favoritesStore.has(story: story.id)
+        favoritesBarButtonItem.inFavorites = favoritesStore.has(story: story.id)
     }
 
 }
 
-class FavoritesBarButton: UIBarButtonItem {
+class FavoritesBarButtonItem: UIBarButtonItem {
 
     var inFavorites: Bool = true {
         didSet {
             image = inFavorites ? UIImage(systemName: "star.fill") : UIImage(systemName: "star")
         }
-    }
-
-    override init() {
-        super.init()
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
 }

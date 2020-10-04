@@ -27,7 +27,7 @@ private enum API {
         case .ids(let queryType):
             return URL(string: "https://hacker-news.firebaseio.com/v0/\(queryType.rawValue)stories.json")
         case .searchStories(let searchText):
-                return URL(string: "http://hn.algolia.com/api/v1/search?query=\(searchText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&tags=story")
+            return URL(string: "http://hn.algolia.com/api/v1/search?query=\(searchText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&tags=story")
         case .comment(let id):
             return URL(string: "http://hn.algolia.com/api/v1/items/\(id)")
         }
@@ -38,7 +38,8 @@ enum APIClientError: Error {
     case invalidURL
     case domainError
     case decodingError
-    case unkonwnError
+    case unknownError
+    case sessionTaskCancelled
 }
 
 private struct Item: Decodable {
@@ -168,7 +169,7 @@ class APIClient {
                     return
                 } else {
                     DispatchQueue.main.async {
-                        completionHandler(.failure(.unkonwnError))
+                        completionHandler(.failure(.unknownError))
                     }
                     return
                 }
@@ -226,7 +227,7 @@ class APIClient {
                     return
                 } else {
                     DispatchQueue.main.async {
-                        completionHandler(.failure(.unkonwnError))
+                        completionHandler(.failure(.unknownError))
                     }
                     return
                 }
@@ -316,14 +317,18 @@ extension APIClient {
         }
         self.hackerNewsSearchTask = session.dataTask(with: url) { data, response, error in
             guard let data = data else {
-                if let _ = error {
+                if let error = error {
                     DispatchQueue.main.async {
-                        completionHandler(.failure(.domainError))
+                        if (error as NSError).code == NSURLErrorCancelled {
+                            completionHandler(.failure(.sessionTaskCancelled))
+                        } else {
+                            completionHandler(.failure(.domainError))
+                        }
                     }
                     return
                 } else {
                     DispatchQueue.main.async {
-                        completionHandler(.failure(.unkonwnError))
+                        completionHandler(.failure(.unknownError))
                     }
                     return
                 }
@@ -358,7 +363,7 @@ extension APIClient {
                     return
                 } else {
                     DispatchQueue.main.async {
-                        completionHandler(.failure(.unkonwnError))
+                        completionHandler(.failure(.unknownError))
                     }
                     return
                 }
