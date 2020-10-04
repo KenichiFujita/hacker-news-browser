@@ -39,7 +39,7 @@ enum APIClientError: Error {
     case domainError
     case decodingError
     case unknownError
-    case sessionTaskCancelled
+    case cancel
 }
 
 private struct Item: Decodable {
@@ -320,7 +320,7 @@ extension APIClient {
                 if let error = error {
                     DispatchQueue.main.async {
                         if (error as NSError).code == NSURLErrorCancelled {
-                            completionHandler(.failure(.sessionTaskCancelled))
+                            completionHandler(.failure(.cancel))
                         } else {
                             completionHandler(.failure(.domainError))
                         }
