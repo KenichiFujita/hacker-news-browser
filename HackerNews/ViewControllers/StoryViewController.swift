@@ -17,6 +17,7 @@ class StoryViewController: UIViewController {
     private var headerImage: UIImage?
     private let favoritesStore: FavoritesStore
     private let favoritesBarButtonItem = FavoritesBarButtonItem()
+    private let shareBarButtonItem = UIBarButtonItem()
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .systemBackground
@@ -71,7 +72,10 @@ class StoryViewController: UIViewController {
         favoritesBarButtonItem.inFavorites = favoritesStore.has(story: story.id)
         favoritesBarButtonItem.target = self
         favoritesBarButtonItem.action = #selector(favoritesBarButtonTapped)
-        navigationItem.rightBarButtonItems = [favoritesBarButtonItem]
+        shareBarButtonItem.image = UIImage(systemName: "square.and.arrow.up")
+        shareBarButtonItem.target = self
+        shareBarButtonItem.action = #selector(shareBarButtonTapped)
+        navigationItem.rightBarButtonItems = [favoritesBarButtonItem, shareBarButtonItem]
     }
     
     private func getComments(of story: Story) {
@@ -112,6 +116,37 @@ class StoryViewController: UIViewController {
             favoritesStore.add(storyId: story.id)
             favoritesBarButtonItem.inFavorites = true
         }
+    }
+
+    @objc func shareBarButtonTapped() {
+
+        let shareOptionViewController = UIAlertController(title: "Share Link", message: nil, preferredStyle: .actionSheet)
+        let shareStoryLinkAction = UIAlertAction(title: "Share Story Link", style: .default) { _ in
+            guard let storyURLString = self.story.url, let storyURL = URL(string: storyURLString) else {
+                return
+            }
+            self.share(url: storyURL)
+        }
+        let shareCommentPageLinkAction = UIAlertAction(title: "Share Comment Page Link", style: .default) { _ in
+            guard let url = URL(string: "https://news.ycombinator.com/item?id=\(self.story.id)") else {
+                return
+            }
+            self.share(url: url)
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        shareOptionViewController.addAction(shareStoryLinkAction)
+        shareOptionViewController.addAction(shareCommentPageLinkAction)
+        shareOptionViewController.addAction(cancelAction)
+        present(shareOptionViewController, animated: true, completion: nil)
+
+    }
+
+    private func share(url: URL) {
+
+        let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        activityViewController.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
+        present(activityViewController, animated: true, completion: nil)
+
     }
 
 }
