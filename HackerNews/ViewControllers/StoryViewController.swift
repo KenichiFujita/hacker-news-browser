@@ -12,12 +12,13 @@ import Kingfisher
 
 class StoryViewController: UIViewController {
     private let story: Story
+    private var urlToShare: URL?
     private let api = APIClient()
     private var commentSections: [[Comment]] = []
     private var headerImage: UIImage?
     private let favoritesStore: FavoritesStore
     private let favoritesBarButtonItem = FavoritesBarButtonItem()
-    private let shareBarButtonItem = UIBarButtonItem()
+    private let shareBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: nil, action: nil)
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .systemBackground
@@ -72,7 +73,6 @@ class StoryViewController: UIViewController {
         favoritesBarButtonItem.inFavorites = favoritesStore.has(story: story.id)
         favoritesBarButtonItem.target = self
         favoritesBarButtonItem.action = #selector(favoritesBarButtonTapped)
-        shareBarButtonItem.image = UIImage(systemName: "square.and.arrow.up")
         shareBarButtonItem.target = self
         shareBarButtonItem.action = #selector(shareBarButtonTapped)
         navigationItem.rightBarButtonItems = [favoritesBarButtonItem, shareBarButtonItem]
@@ -122,28 +122,25 @@ class StoryViewController: UIViewController {
 
         let shareOptionViewController = UIAlertController(title: "Share Link", message: nil, preferredStyle: .actionSheet)
         let shareStoryLinkAction = UIAlertAction(title: "Share Story Link", style: .default) { _ in
-            guard let storyURLString = self.story.url, let storyURL = URL(string: storyURLString) else {
+            guard let storyURLString = self.story.url else {
                 return
             }
-            self.share(url: storyURL)
+            self.share(url: URL(string: storyURLString))
         }
-        let shareCommentPageLinkAction = UIAlertAction(title: "Share Comment Page Link", style: .default) { _ in
-            guard let url = URL(string: "https://news.ycombinator.com/item?id=\(self.story.id)") else {
-                return
-            }
-            self.share(url: url)
+        let shareHackerNewsLinkAction = UIAlertAction(title: "Share Hacker News Link", style: .default) { _ in
+            self.share(url: URL(string: "https://news.ycombinator.com/item?id=\(self.story.id)") )
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         shareOptionViewController.addAction(shareStoryLinkAction)
-        shareOptionViewController.addAction(shareCommentPageLinkAction)
+        shareOptionViewController.addAction(shareHackerNewsLinkAction)
         shareOptionViewController.addAction(cancelAction)
         present(shareOptionViewController, animated: true, completion: nil)
 
     }
 
-    private func share(url: URL) {
-
-        let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+    private func share(url: URL?) {
+        urlToShare = url
+        let activityViewController = UIActivityViewController(activityItems: [story.title, self], applicationActivities: nil)
         activityViewController.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
         present(activityViewController, animated: true, completion: nil)
 
@@ -241,6 +238,28 @@ class FavoritesBarButtonItem: UIBarButtonItem {
         didSet {
             image = inFavorites ? UIImage(systemName: "star.fill") : UIImage(systemName: "star")
         }
+    }
+
+}
+
+extension StoryViewController: UIActivityItemSource {
+
+    func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any {
+        guard let urlToShare = urlToShare else {
+            return "Invalid URL"
+        }
+        return urlToShare
+    }
+
+    func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivity.ActivityType?) -> Any? {
+        guard let urlToShare = urlToShare else {
+            return "Invalid URL"
+        }
+        return urlToShare
+    }
+
+    func activityViewController(_ activityViewController: UIActivityViewController, subjectForActivityType activityType: UIActivity.ActivityType?) -> String {
+        return story.title
     }
 
 }
