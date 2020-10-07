@@ -43,6 +43,7 @@ class StoryCell: UITableViewCell {
         commentButton.titleLabel?.font = UIFont.systemFont(ofSize: 10)
         commentButton.translatesAutoresizingMaskIntoConstraints = false
         commentButton.setContentHuggingPriority(.required, for: .horizontal)
+        commentButton.setContentCompressionResistancePriority(.required, for: .horizontal)
         let commentButtonImage = UIImage(named: "commentButtonImage")?.withRenderingMode(.alwaysTemplate)
         commentButton.tintColor = .label
         commentButton.setBackgroundImage(commentButtonImage, for: .normal)
@@ -105,7 +106,7 @@ class StoryCell: UITableViewCell {
         hStack.addArrangedSubview(vStack)
         hStack.addArrangedSubview(balloonCommentButton)
         tappableCommentButton.addTarget(self, action: #selector(commentButtonTapped(_:)), for: .touchUpInside)
-        
+
         NSLayoutConstraint.activate([
             hStack.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
             hStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
