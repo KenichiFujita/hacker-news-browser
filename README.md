@@ -1,5 +1,5 @@
 <img src="https://user-images.githubusercontent.com/50497605/81622432-fadbce80-93be-11ea-8e02-e7728c2b949f.png" width="300">
-![HNB_demo](https://user-images.githubusercontent.com/50497605/96914022-6ba90b80-1472-11eb-93d0-c528a6a58ab4.gif)
+<img src="https://user-images.githubusercontent.com/50497605/96914022-6ba90b80-1472-11eb-93d0-c528a6a58ab4.gif" width="300">
 
 # Hacker News Browser
 
