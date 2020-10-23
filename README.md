@@ -49,4 +49,4 @@ The app is also available on the [App Store](https://apps.apple.com/us/app/hnb-h
 
 ## License
 
-Hacker News Browser is released under the MIT license. See LICENSE for details.
+HNB - Hacker News Browser is released under the MIT license. See LICENSE for details.
