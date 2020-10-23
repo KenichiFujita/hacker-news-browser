@@ -1,9 +1,19 @@
-<img src="https://user-images.githubusercontent.com/50497605/81622432-fadbce80-93be-11ea-8e02-e7728c2b949f.png" width="300">
+<p align="middle">
+  <img src="https://user-images.githubusercontent.com/50497605/97041221-31587080-153d-11eb-8794-914898358271.png" height="300">
+</p>
+
+<br>
+
 <img src="https://user-images.githubusercontent.com/50497605/96914022-6ba90b80-1472-11eb-93d0-c528a6a58ab4.gif" width="300">
+
+<br>
 
 # Hacker News Browser
 
-![](https://img.shields.io/apm/l/vim-mode)  
+![](https://img.shields.io/apm/l/vim-mode)
+![](https://img.shields.io/badge/platform-iOS-orange)
+![](https://img.shields.io/badge/language-Swift-orange)
+
 Hacker News Browser is an open source mobile app for iOS that can browse, search and store stories of Hacker News run by Y Combinator.
 
 ## Features
