@@ -4,7 +4,11 @@
 
 <br>
 
-<img src="https://user-images.githubusercontent.com/50497605/96914022-6ba90b80-1472-11eb-93d0-c528a6a58ab4.gif" width="300">
+<p align="left">
+  <img src="https://user-images.githubusercontent.com/50497605/97047140-7df47980-1546-11eb-9aba-41cb85f61cea.gif" width="300">
+  <img src="https://user-images.githubusercontent.com/50497605/97047905-a6c93e80-1547-11eb-805a-f396990d9e8f.gif" width="300">
+  <img src="https://user-images.githubusercontent.com/50497605/97048801-a54c4600-1548-11eb-930a-61b1b2b52a18.gif" width="300">
+ </p>
 
 <br>
 
