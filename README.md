@@ -12,13 +12,15 @@
 
 <br>
 
-# Hacker News Browser
+# HNB - Hacker News Browser
 
 ![](https://img.shields.io/apm/l/vim-mode)
 ![](https://img.shields.io/badge/platform-iOS-orange)
 ![](https://img.shields.io/badge/language-Swift-orange)
 
-Hacker News Browser is an open source mobile app for iOS that can browse, search and store stories of Hacker News run by Y Combinator.
+[<img src="https://user-images.githubusercontent.com/50497605/97053782-8ef6b800-1551-11eb-85ce-ff72ac9c3a44.png" height="40">](https://apps.apple.com/us/app/hnb-hacker-news-browser/id1534089588)
+
+HNB - Hacker News Browser is an open source mobile app for iOS that can browse, search and store stories of Hacker News run by Y Combinator. The app is available on the [App Store](https://apps.apple.com/us/app/hnb-hacker-news-browser/id1534089588) for iPhone and iPad.
 
 ## Features
 
@@ -38,8 +40,8 @@ You'll be always up-to-date on the computer science and entrepreneurship topics.
 
 ## Install
 
-Download the source code and compile it by yourself using Xcode. If you want to run it on a device, you also need an Apple developer account.  
-I am currently working on releasing the app on the App Store. 
+Download the source code and compile it by yourself using Xcode.<br>
+The app is also available on the [App Store](https://apps.apple.com/us/app/hnb-hacker-news-browser/id1534089588) for iPhone and iPad.
 
 ## The app uses 
 [SwiftSoup](https://github.com/scinfu/SwiftSoup) as HTML parser.  
