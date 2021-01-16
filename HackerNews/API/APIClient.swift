@@ -76,7 +76,7 @@ private struct Item: Decodable {
     }
 }
 
-struct Story: Equatable {
+struct Story: Equatable, Identifiable {
     let by: String
     let descendants: Int
     let id: Int

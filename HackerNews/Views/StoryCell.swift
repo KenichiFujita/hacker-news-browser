@@ -250,23 +250,6 @@ extension String {
     }
 }
 
-extension URL {
-    var hostWithoutWWW: String? {
-        guard let host = self.host else {
-            return nil
-        }
-        if host.prefix(4) == "www." {
-            guard let indexOfDot = host.firstIndex(of: ".") else {
-                return host
-            }
-            var host = host
-            host.removeSubrange(host.startIndex...indexOfDot)
-            return host
-        }
-        return host
-    }
-}
-
 extension UIColor {
     static func customColor(for text: String) -> UIColor {
         if let initial = text.first, let asciiValue = Character(initial.lowercased()).asciiValue {
