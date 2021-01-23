@@ -68,6 +68,13 @@ class StoryCell: UITableViewCell {
         image.layer.borderColor = UIColor.gray.cgColor
         return image
     }()
+
+    let spinnerView: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView(frame: .zero)
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        spinner.startAnimating()
+        return spinner
+    }()
     
     public let hostLabel: UILabel = {
         let label = UILabel()
@@ -102,6 +109,7 @@ class StoryCell: UITableViewCell {
         self.backgroundColor = UIColor.systemBackground
         contentView.addSubview(tappableCommentButton)
         contentView.addSubview(hStack)
+        faviconImageView.addSubview(spinnerView)
         hStack.addArrangedSubview(faviconImageView)
         hStack.addArrangedSubview(vStack)
         hStack.addArrangedSubview(balloonCommentButton)
@@ -117,8 +125,12 @@ class StoryCell: UITableViewCell {
             tappableCommentButton.bottomAnchor.constraint(equalTo: bottomAnchor),
             tappableCommentButton.trailingAnchor.constraint(equalTo: trailingAnchor),
             tappableCommentButton.leadingAnchor.constraint(equalTo: balloonCommentButton.leadingAnchor, constant: -12),
+
+            spinnerView.topAnchor.constraint(equalTo: faviconImageView.topAnchor),
+            spinnerView.leadingAnchor.constraint(equalTo: faviconImageView.leadingAnchor),
+            spinnerView.trailingAnchor.constraint(equalTo: faviconImageView.trailingAnchor),
+            spinnerView.bottomAnchor.constraint(equalTo: faviconImageView.bottomAnchor)
         ])
-        
     }
     
     required init?(coder: NSCoder) {
@@ -136,36 +148,34 @@ class StoryCell: UITableViewCell {
         }
         vStack.replaceArrangedSubviews(with: [hostLabel, storyTitleLabel, storyInfoLabel].filter { $0.text != nil })
         if let storyURL = story.url, let url = URL(string: storyURL) {
-            StoryImageInfoStore.shared.imageIconURL(for: url) { (url) in
+            StoryImageInfoStore.shared.imageIconURL(for: url) { [weak self] (url) in
+                guard let strongSelf = self else { return }
                 if let url = url {
-                    self.setImage(url: url, story: story)
+                    strongSelf.setImage(url: url, story: story)
                 } else {
-                    guard let desiredURL = self.story?.url, desiredURL == story.url else { return }
-                    self.faviconImageView.image = story.defaultTouchIcon()
+                    guard let desiredURL = strongSelf.story?.url, desiredURL == story.url else { return }
+                    strongSelf.faviconImageView.image = story.defaultTouchIcon()
+                    strongSelf.spinnerView.stopAnimating()
                 }
             }
         } else {
             self.faviconImageView.image = story.defaultTouchIcon()
+            spinnerView.stopAnimating()
             return
         }
     }
     
     private func setImage(url: URL, story: Story) {
-        KingfisherManager.shared.retrieveImage(with: url) { (result) in
+        guard let desiredURL = self.story?.url else { return }
+        KingfisherManager.shared.retrieveImage(with: url) { [weak self] (result) in
+            guard let strongSelf = self, desiredURL == story.url else { return }
+            strongSelf.spinnerView.stopAnimating()
             switch result {
             case .success(let value):
-                guard let desiredURL = self.story?.url,
-                    desiredURL == story.url else { return }
                 let image = value.image as UIImage
-                if image.size.height < 64 {
-                    self.faviconImageView.image = story.defaultTouchIcon()
-                    return
-                }
-                self.faviconImageView.image = value.image as UIImage
+                strongSelf.faviconImageView.image = image.size.height < 64 ? story.defaultTouchIcon() : image
             case .failure(_):
-                guard let desiredURL = self.story?.url,
-                    desiredURL == story.url else { return }
-                self.faviconImageView.image = story.defaultTouchIcon()
+                strongSelf.faviconImageView.image = story.defaultTouchIcon()
             }
         }
     }
@@ -178,6 +188,7 @@ class StoryCell: UITableViewCell {
         balloonCommentButton.setTitle(nil, for: .normal)
         faviconImageView.image = nil
         hostLabel.text = nil
+        spinnerView.startAnimating()
     }
     
     @objc func commentButtonTapped(_ sende: UIButton) {
