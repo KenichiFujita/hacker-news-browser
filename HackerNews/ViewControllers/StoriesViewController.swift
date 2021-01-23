@@ -91,10 +91,11 @@ class StoriesViewController: UIViewController {
         
         viewModel.delegate = self
         tableView.refreshControl = self.refreshControl
-        refreshControl.addTarget(self, action: #selector(fetchItems), for: .valueChanged)
+        refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
         tableView.delegate = self
         tableView.dataSource = self
-        fetchItems()
+
+        viewModel.viewDidLoad()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -107,8 +108,8 @@ class StoriesViewController: UIViewController {
         navigationItem.title = ""
     }
     
-    @objc func fetchItems() {
-        viewModel.load()
+    @objc func didPullToRefresh() {
+        viewModel.didPullToRefresh()
     }
 }
 
@@ -178,7 +179,7 @@ extension StoriesViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row == tableView.numberOfRows(inSection: 0) - 1, viewModel.hasMore {
-            viewModel.loadNext()
+            viewModel.lastCellWillDisplay()
         }
     }
     
@@ -205,10 +206,11 @@ extension StoriesViewController: StoriesViewModelDelegate {
         if viewModel.canShowInstruction {
             instructionView.isHidden = viewModel.stories.count != 0
         }
+        self.tableView.reloadData()
+
         if refreshControl.isRefreshing {
-            refreshControl.endRefreshing()
+            self.refreshControl.endRefreshing()
         }
-        tableView.reloadData()
     }
     
 }

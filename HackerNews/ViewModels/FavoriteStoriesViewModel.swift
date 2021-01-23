@@ -32,13 +32,24 @@ class FavoriteStoriesViewModel: StoriesViewModelType {
         favoritesStore.removeObserver(self)
     }
 
-    func load() {
-        api.stories(for: favoritesStore.favorites) { (stories) in
-            self.stories = stories
+    func viewDidLoad() {
+        load()
+    }
+
+    func didPullToRefresh() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            self.load()
         }
     }
 
-    func loadNext() { }
+    func lastCellWillDisplay() { }
+
+    private func load(needRefreshIds refreshIDs: Bool = false) {
+        api.stories(for: favoritesStore.favorites) { [weak self] (stories) in
+            guard let strongSelf = self else { return }
+            strongSelf.stories = stories
+        }
+    }
 
 }
 

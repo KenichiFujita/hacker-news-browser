@@ -18,8 +18,9 @@ protocol StoriesViewModelType: class {
     var delegate: StoriesViewModelDelegate? { get set }
     var canShowInstruction: Bool { get }
     var favoritesStore: FavoritesStore { get }
-    func load()
-    func loadNext()
+    func viewDidLoad()
+    func didPullToRefresh()
+    func lastCellWillDisplay()
 }
 
 
@@ -47,20 +48,36 @@ class StoriesViewModel: StoriesViewModelType {
         self.favoritesStore = favoritesStore
     }
 
-    func load() {
-        self.stories = []
-        loadNext()
+    func viewDidLoad() {
+        load()
     }
 
-    func loadNext() {
+    func didPullToRefresh() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            self.load()
+        }
+    }
+
+    func lastCellWillDisplay() {
+        load(offset: stories.count)
+    }
+
+    private func load(offset: Int = 0) {
         hasMore = false
-        store.stories(for: self.type, offset: self.stories.count, limit: 10) { (result) in
+        store.stories(for: self.type,
+                      offset: offset,
+                      limit: 10) { [weak self] (result) in
+            guard let strongSelf = self else { return }
             if case .success(let stories) = result {
-                self.stories.append(contentsOf: stories)
-                if stories.count < 10 {
-                    self.hasMore = false
+                if offset == 0 {
+                    strongSelf.stories = stories
                 } else {
-                    self.hasMore = true
+                    strongSelf.stories.append(contentsOf: stories)
+                }
+                if stories.count < 10 {
+                    strongSelf.hasMore = false
+                } else {
+                    strongSelf.hasMore = true
                 }
             }
         }
