@@ -211,7 +211,7 @@ private extension Story {
                                                      score: 0,
                                                      date: Date(),
                                                      title: "DummyStory-----------------------------------------------------------------------------------------------------------------------------",
-                                                     url: "https://dummystory.com",
+                                                     url: "https://dummy.hnb",
                                                      text: nil)
 }
 
