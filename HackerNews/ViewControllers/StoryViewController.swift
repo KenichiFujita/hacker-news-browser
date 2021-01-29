@@ -134,6 +134,10 @@ class StoryViewController: UIViewController {
         shareOptionViewController.addAction(shareStoryLinkAction)
         shareOptionViewController.addAction(shareHackerNewsLinkAction)
         shareOptionViewController.addAction(cancelAction)
+        if let popoverPresentationController = shareOptionViewController.popoverPresentationController {
+            popoverPresentationController.barButtonItem = shareBarButtonItem
+            popoverPresentationController.permittedArrowDirections = .up
+        }
         present(shareOptionViewController, animated: true, completion: nil)
 
     }
