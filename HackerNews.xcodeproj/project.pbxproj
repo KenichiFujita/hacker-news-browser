@@ -34,6 +34,7 @@
 		225E674B251BFD3B000D4AB0 /* StoryImageInfoData.html in Resources */ = {isa = PBXBuildFile; fileRef = 225E6747251BE588000D4AB0 /* StoryImageInfoData.html */; };
 		225E674C251BFD3B000D4AB0 /* StoryImageInfoDataWithoutOgImage.html in Resources */ = {isa = PBXBuildFile; fileRef = 225E6749251BE6E0000D4AB0 /* StoryImageInfoDataWithoutOgImage.html */; };
 		2265D32F23F831C200067B7F /* StoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2265D32E23F831C200067B7F /* StoryStore.swift */; };
+		2278FEF626505F820063983B /* HNBUI in Frameworks */ = {isa = PBXBuildFile; productRef = 2278FEF526505F820063983B /* HNBUI */; };
 		227CF53323C57731000D2A52 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227CF53223C57731000D2A52 /* MainTabBarController.swift */; };
 		227CF53523CBC0C4000D2A52 /* StoryViewHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227CF53423CBC0C4000D2A52 /* StoryViewHeaderCell.swift */; };
 		227CF53823CD4524000D2A52 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 227CF53723CD4524000D2A52 /* Kingfisher */; };
@@ -55,6 +56,7 @@
 		2290BE5823CEAB8E00FBA2D4 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 2290BE5723CEAB8E00FBA2D4 /* SwiftSoup */; };
 		2290BE5A23CEB5F300FBA2D4 /* HTMLView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2290BE5923CEB5F300FBA2D4 /* HTMLView.swift */; };
 		22B074522528BE1300F1C42B /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B074512528BE1300F1C42B /* SearchViewModel.swift */; };
+		22B1336F2648CBE700EE8714 /* UIColor+HN.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B1336E2648CBE700EE8714 /* UIColor+HN.swift */; };
 		22CD276024228E5A006CF0C4 /* StoryImageInfoCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22CD275F24228E5A006CF0C4 /* StoryImageInfoCache.swift */; };
 		22D6A9B925ACFEEB00073C2E /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22D6A9B825ACFEEB00073C2E /* WidgetKit.framework */; };
 		22D6A9BB25ACFEEB00073C2E /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22D6A9BA25ACFEEB00073C2E /* SwiftUI.framework */; };
@@ -158,6 +160,7 @@
 		228AA7152381B0C900B4D512 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2290BE5923CEB5F300FBA2D4 /* HTMLView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLView.swift; sourceTree = "<group>"; };
 		22B074512528BE1300F1C42B /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
+		22B1336E2648CBE700EE8714 /* UIColor+HN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+HN.swift"; sourceTree = "<group>"; };
 		22CD275F24228E5A006CF0C4 /* StoryImageInfoCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryImageInfoCache.swift; sourceTree = "<group>"; };
 		22D6A9B625ACFEEB00073C2E /* HackerNewsWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HackerNewsWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		22D6A9B825ACFEEB00073C2E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -176,6 +179,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2278FEF626505F820063983B /* HNBUI in Frameworks */,
 				227CF53823CD4524000D2A52 /* Kingfisher in Frameworks */,
 				2290BE5823CEAB8E00FBA2D4 /* SwiftSoup in Frameworks */,
 			);
@@ -279,6 +283,7 @@
 				221FD66E2465F3F000BCE17E /* UIFont+HN.swift */,
 				221FD6702465F43A00BCE17E /* Date+HN.swift */,
 				2281821D25B0264D00EE0CA1 /* URL+HN.swift */,
+				22B1336E2648CBE700EE8714 /* UIColor+HN.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -391,6 +396,7 @@
 			packageProductDependencies = (
 				227CF53723CD4524000D2A52 /* Kingfisher */,
 				2290BE5723CEAB8E00FBA2D4 /* SwiftSoup */,
+				2278FEF526505F820063983B /* HNBUI */,
 			);
 			productName = HackerNews;
 			productReference = 228AA6EE2381B0C600B4D512 /* HackerNews.app */;
@@ -491,6 +497,7 @@
 			packageReferences = (
 				227CF53623CD4524000D2A52 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				2290BE5623CEAB8E00FBA2D4 /* XCRemoteSwiftPackageReference "SwiftSoup" */,
+				2278FEF426505F820063983B /* XCRemoteSwiftPackageReference "HNBUI" */,
 			);
 			productRefGroup = 228AA6EF2381B0C600B4D512 /* Products */;
 			projectDirPath = "";
@@ -572,6 +579,7 @@
 				221FD66F2465F3F000BCE17E /* UIFont+HN.swift in Sources */,
 				228AA6F22381B0C600B4D512 /* AppDelegate.swift in Sources */,
 				22D6A9C425ACFEEB00073C2E /* HackerNewsWidget.intentdefinition in Sources */,
+				22B1336F2648CBE700EE8714 /* UIColor+HN.swift in Sources */,
 				22466EB1242987370012636F /* SearchViewController.swift in Sources */,
 				2265D32F23F831C200067B7F /* StoryStore.swift in Sources */,
 				224122BC240E01B80096CF6B /* StoryImageInfoStore.swift in Sources */,
@@ -989,6 +997,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		2278FEF426505F820063983B /* XCRemoteSwiftPackageReference "HNBUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/KenichiFujita/HNBUI.git";
+			requirement = {
+				branch = ChildViewController_Loading;
+				kind = branch;
+			};
+		};
 		227CF53623CD4524000D2A52 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -1012,6 +1028,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 227CF53623CD4524000D2A52 /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = KingfisherSwiftUI;
+		};
+		2278FEF526505F820063983B /* HNBUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2278FEF426505F820063983B /* XCRemoteSwiftPackageReference "HNBUI" */;
+			productName = HNBUI;
 		};
 		227CF53723CD4524000D2A52 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;

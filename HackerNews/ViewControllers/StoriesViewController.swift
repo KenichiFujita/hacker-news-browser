@@ -11,10 +11,11 @@ import SafariServices
 
 class StoriesViewController: UIViewController {
     
-    init(viewModel: StoriesViewModelType, title: String) {
+    init(viewModel: StoriesViewModelType, tabBarTitle: String, tabBarImage: UIImage?) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        self.title = title
+        tabBarItem.title = tabBarTitle
+        tabBarItem.image = tabBarImage
     }
     
     required init?(coder: NSCoder) {
@@ -31,6 +32,7 @@ class StoriesViewController: UIViewController {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 100
         tableView.register(StoryCell.self, forCellReuseIdentifier: "StoryCell")
+        tableView.isHidden = true
         return tableView
     }()
     
@@ -40,7 +42,7 @@ class StoriesViewController: UIViewController {
         label.numberOfLines = 0
         label.font = .preferredFont(forTextStyle: .title3)
         label.textColor = .systemGray
-        label.text = "Swipe stories to the left to add to Favorites and favorite stories to appear here"
+        label.text = "You have no favorite stories"
         label.textAlignment = .center
         return label
     }()
@@ -51,22 +53,30 @@ class StoriesViewController: UIViewController {
         view.backgroundColor = .systemBackground
         return view
     }()
-    
-    private let refreshControl: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
-        return refreshControl
+
+    let activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        indicator.startAnimating()
+        return indicator
     }()
+    
+    private let refreshControl: UIRefreshControl = UIRefreshControl()
     
     override func loadView() {
         super.loadView()
         
         view.addSubview(tableView)
+        view.addSubview(activityIndicator)
         
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
+
+            activityIndicator.topAnchor.constraint(equalTo: view.topAnchor),
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
         
         if viewModel.canShowInstruction {
@@ -88,7 +98,7 @@ class StoriesViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         viewModel.delegate = self
         tableView.refreshControl = self.refreshControl
         refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
@@ -144,37 +154,10 @@ extension StoriesViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
     }
-    
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-
-        let favoritesStore = viewModel.favoritesStore
-        let story = viewModel.stories[indexPath.row]
-        let title: String = favoritesStore.has(story: story.id) ? "Unfavorite" : "Favorite"
-
-        let action = UIContextualAction(style: .destructive, title: title) { (action, view, completionHandler) in
-
-            if title == "Favorite" {
-                favoritesStore.add(storyId: story.id)
-            } else {
-                favoritesStore.remove(storyId: story.id)
-            }
-            if let cell = tableView.cellForRow(at: indexPath) as? StoryCell {
-                cell.configure(with: story)
-            }
-            completionHandler(true)
-        }
-        action.backgroundColor = .systemTeal
-        return UISwipeActionsConfiguration(actions: [action])
-    }
         
     func showSafariViewController(for url: String) {
-        
-        guard let url = URL(string: url) else {
-            return
-        }
-        
-        let safariVC = SFSafariViewController(url: url)
-        present(safariVC, animated: true)
+        guard let url = URL(string: url) else { return }
+        present(SFSafariViewController(url: url), animated: true)
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -207,10 +190,11 @@ extension StoriesViewController: StoriesViewModelDelegate {
             instructionView.isHidden = viewModel.stories.count != 0
         }
         self.tableView.reloadData()
-
+        tableView.isHidden = false
         if refreshControl.isRefreshing {
             self.refreshControl.endRefreshing()
         }
+        activityIndicator.stopAnimating()
     }
     
 }

@@ -14,10 +14,11 @@ class SearchViewController: UIViewController {
     var viewModel: SearchViewModel
     var stories: [Story] = []
     
-    init(viewModel: SearchViewModel, title: String) {
+    init(viewModel: SearchViewModel, tabBarTitle: String, TabBarImage: UIImage?) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        self.title = title
+        tabBarItem.title = tabBarTitle
+        tabBarItem.image = TabBarImage
     }
     
     required init?(coder: NSCoder) {
@@ -44,10 +45,10 @@ class SearchViewController: UIViewController {
         return label
     }()
 
-    private let searchController: UISearchController = {
-        let searchController = UISearchController(searchResultsController: nil)
-        searchController.obscuresBackgroundDuringPresentation = false
-        return searchController
+    private let searchBar: UISearchBar = {
+        let searchBar = UISearchBar()
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
+        return searchBar
     }()
 
     override func loadView() {
@@ -56,9 +57,13 @@ class SearchViewController: UIViewController {
         view.backgroundColor = .systemBackground
         view.addSubview(tableView)
         view.addSubview(informationLabel)
+        view.addSubview(searchBar)
         
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            searchBar.topAnchor.constraint(equalTo: view.topAnchor),
+            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -70,10 +75,9 @@ class SearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.navigationItem.searchController = searchController
         tableView.delegate = self
         tableView.dataSource = self
-        searchController.searchBar.delegate = self
+        searchBar.delegate = self
         viewModel.outputs.delegate = self
         viewModel.inputs.viewDidLoad()
     }
@@ -115,7 +119,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        searchController.searchBar.endEditing(true)
+        searchBar.endEditing(true)
     }
     
 }

@@ -2,12 +2,21 @@
   "object": {
     "pins": [
       {
+        "package": "HNBUI",
+        "repositoryURL": "https://github.com/KenichiFujita/HNBUI.git",
+        "state": {
+          "branch": "ChildViewController_Loading",
+          "revision": "109c47b676b750977d8ea73d6c55fb9a508c250d",
+          "version": null
+        }
+      },
+      {
         "package": "Kingfisher",
         "repositoryURL": "https://github.com/onevcat/Kingfisher.git",
         "state": {
           "branch": null,
-          "revision": "2f9d171f17869768f6dbec1d039b851e2503af35",
-          "version": "5.12.0"
+          "revision": "2a10bf41da75599a9f8e872dbd44fe0155a2e00c",
+          "version": "5.15.8"
         }
       },
       {
