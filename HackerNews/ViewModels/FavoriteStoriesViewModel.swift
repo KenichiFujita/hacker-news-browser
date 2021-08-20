@@ -8,19 +8,32 @@
 
 import UIKit
 
-class FavoriteStoriesViewModel: StoriesViewModelType {
+class FavoriteStoriesViewModel: StoriesViewModelType, StoriesViewModelOutputs {
+
+    var inputs: StoriesViewModelInputs { return self }
+
+    var outputs: StoriesViewModelOutputs { return self }
+
+    var reloadData: () -> Void = { }
+
+    var didReceiveServiceError: (Error) -> Void = { _ in }
+
+    var pushViewController: (StoryViewController) -> Void = { _ in }
+
+    var presentViewController: (UIViewController) -> Void = { _ in }
 
     var hasMore: Bool = false
     var canShowInstruction: Bool {
         return true
     }
     var favoritesStore: FavoritesStore
+
     var stories: [Story] = [] {
         didSet {
-            delegate?.storiesViewModelUpdated(self)
+            reloadData()
         }
     }
-    weak var delegate: StoriesViewModelDelegate?
+
     let api: APIClient = APIClient()
     
     init(favoritesStore: FavoritesStore) {
@@ -59,4 +72,12 @@ extension FavoriteStoriesViewModel: FavoriteStoreObserver {
         load()
     }
     
+}
+
+extension FavoriteStoriesViewModel: StoriesViewModelInputs {
+
+    func storyCellCommentButtonTapped(at indexPath: IndexPath) { }
+
+    func didSelectRowAt(_ indexPath: IndexPath) { }
+
 }
