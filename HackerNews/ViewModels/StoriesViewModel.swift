@@ -15,14 +15,6 @@ protocol StoriesViewModelDelegate: AnyObject {
 protocol StoriesViewModelType: AnyObject {
     var inputs: StoriesViewModelInputs { get }
     var outputs: StoriesViewModelOutputs { get }
-    var stories: [Story] { get }
-    var hasMore: Bool { get }
-    var delegate: StoriesViewModelDelegate? { get set }
-    var canShowInstruction: Bool { get }
-    var favoritesStore: FavoritesStore { get }
-    func viewDidLoad()
-    func didPullToRefresh()
-    func lastCellWillDisplay()
 }
 
 protocol StoriesViewModelInputs {

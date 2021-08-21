@@ -69,33 +69,33 @@ class StoriesViewController: UIViewController {
             tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
         ])
         
-        if viewModel.canShowInstruction {
-            view.addSubview(instructionView)
-            instructionView.addSubview(instructionLabel)
-            
-            NSLayoutConstraint.activate([
-                instructionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-                instructionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-                instructionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-                instructionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-                
-                instructionLabel.centerYAnchor.constraint(equalTo: instructionView.centerYAnchor),
-                instructionLabel.leadingAnchor.constraint(equalTo: instructionView.leadingAnchor, constant: 100),
-                instructionLabel.trailingAnchor.constraint(equalTo: instructionView.trailingAnchor, constant: -100)
-            ])
-        }
+//        if viewModel.canShowInstruction {
+//            view.addSubview(instructionView)
+//            instructionView.addSubview(instructionLabel)
+//            
+//            NSLayoutConstraint.activate([
+//                instructionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+//                instructionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+//                instructionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+//                instructionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+//                
+//                instructionLabel.centerYAnchor.constraint(equalTo: instructionView.centerYAnchor),
+//                instructionLabel.leadingAnchor.constraint(equalTo: instructionView.leadingAnchor, constant: 100),
+//                instructionLabel.trailingAnchor.constraint(equalTo: instructionView.trailingAnchor, constant: -100)
+//            ])
+//        }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        viewModel.delegate = self
+//        viewModel.delegate = self
         tableView.refreshControl = self.refreshControl
         refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
         tableView.delegate = self
         tableView.dataSource = self
 
-        viewModel.viewDidLoad()
+        viewModel.inputs.viewDidLoad()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -109,7 +109,7 @@ class StoriesViewController: UIViewController {
     }
     
     @objc func didPullToRefresh() {
-        viewModel.didPullToRefresh()
+        viewModel.inputs.didPullToRefresh()
     }
 }
 
@@ -117,7 +117,7 @@ class StoriesViewController: UIViewController {
 extension StoriesViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.stories.count
+        return viewModel.outputs.stories.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -125,18 +125,18 @@ extension StoriesViewController: UITableViewDelegate, UITableViewDataSource {
         guard let storyCell = cell as? StoryCell else {
             return cell
         }
-        let story = viewModel.stories[indexPath.row]
+        let story = viewModel.outputs.stories[indexPath.row]
         storyCell.delegate = self
         storyCell.configure(with: story)
         return storyCell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let story = viewModel.stories[indexPath.row]
+        let story = viewModel.outputs.stories[indexPath.row]
         if let url = story.url {
             showSafariViewController(for: url)
         } else {
-            navigationController?.pushViewController(StoryViewController(story: story, favoritesStore: viewModel.favoritesStore), animated: true)
+            navigationController?.pushViewController(StoryViewController(story: story, favoritesStore: viewModel.outputs.favoritesStore), animated: true)
         }
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -147,8 +147,8 @@ extension StoriesViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
 
-        let favoritesStore = viewModel.favoritesStore
-        let story = viewModel.stories[indexPath.row]
+        let favoritesStore = viewModel.outputs.favoritesStore
+        let story = viewModel.outputs.stories[indexPath.row]
         let title: String = favoritesStore.has(story: story.id) ? "Unfavorite" : "Favorite"
 
         let action = UIContextualAction(style: .destructive, title: title) { (action, view, completionHandler) in
@@ -178,9 +178,9 @@ extension StoriesViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == tableView.numberOfRows(inSection: 0) - 1, viewModel.hasMore {
-            viewModel.lastCellWillDisplay()
-        }
+//        if indexPath.row == tableView.numberOfRows(inSection: 0) - 1, viewModel.hasMore {
+//            viewModel.lastCellWillDisplay()
+//        }
     }
     
 }
@@ -192,8 +192,8 @@ extension StoriesViewController: StoryCellDelegate {
         guard let indexPath = tableView.indexPath(for: cell) else {
             return
         }
-        let story = viewModel.stories[indexPath.row]
-        let storyViewController = StoryViewController(story: story, favoritesStore: viewModel.favoritesStore)
+        let story = viewModel.outputs.stories[indexPath.row]
+        let storyViewController = StoryViewController(story: story, favoritesStore: viewModel.outputs.favoritesStore)
         navigationController?.pushViewController(storyViewController, animated: true)
     }
     
@@ -203,9 +203,9 @@ extension StoriesViewController: StoryCellDelegate {
 extension StoriesViewController: StoriesViewModelDelegate {
     
     func storiesViewModelUpdated(_ viewModel: StoriesViewModelType) {
-        if viewModel.canShowInstruction {
-            instructionView.isHidden = viewModel.stories.count != 0
-        }
+//        if viewModel.canShowInstruction {
+//            instructionView.isHidden = viewModel.stories.count != 0
+//        }
         self.tableView.reloadData()
 
         if refreshControl.isRefreshing {
