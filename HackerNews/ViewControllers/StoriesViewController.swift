@@ -72,13 +72,13 @@ class StoriesViewController: UIViewController {
 //        if viewModel.canShowInstruction {
 //            view.addSubview(instructionView)
 //            instructionView.addSubview(instructionLabel)
-//            
+//
 //            NSLayoutConstraint.activate([
 //                instructionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
 //                instructionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
 //                instructionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
 //                instructionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-//                
+//
 //                instructionLabel.centerYAnchor.constraint(equalTo: instructionView.centerYAnchor),
 //                instructionLabel.leadingAnchor.constraint(equalTo: instructionView.leadingAnchor, constant: 100),
 //                instructionLabel.trailingAnchor.constraint(equalTo: instructionView.trailingAnchor, constant: -100)
@@ -195,22 +195,6 @@ extension StoriesViewController: StoryCellDelegate {
         let story = viewModel.outputs.stories[indexPath.row]
         let storyViewController = StoryViewController(story: story, favoritesStore: viewModel.outputs.favoritesStore)
         navigationController?.pushViewController(storyViewController, animated: true)
-    }
-    
-}
-
-
-extension StoriesViewController: StoriesViewModelDelegate {
-    
-    func storiesViewModelUpdated(_ viewModel: StoriesViewModelType) {
-//        if viewModel.canShowInstruction {
-//            instructionView.isHidden = viewModel.stories.count != 0
-//        }
-        self.tableView.reloadData()
-
-        if refreshControl.isRefreshing {
-            self.refreshControl.endRefreshing()
-        }
     }
     
 }

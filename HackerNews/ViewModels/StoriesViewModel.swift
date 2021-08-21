@@ -8,10 +8,6 @@
 
 import UIKit
 
-protocol StoriesViewModelDelegate: AnyObject {
-    func storiesViewModelUpdated(_ viewModel: StoriesViewModelType)
-}
-
 protocol StoriesViewModelType: AnyObject {
     var inputs: StoriesViewModelInputs { get }
     var outputs: StoriesViewModelOutputs { get }
@@ -43,10 +39,9 @@ class StoriesViewModel: StoriesViewModelType, StoriesViewModelOutputs {
 
     private(set) var stories: [Story] = [] {
         didSet {
-            delegate?.storiesViewModelUpdated(self)
+            reloadData()
         }
     }
-    weak var delegate: StoriesViewModelDelegate?
     let store: StoryStore
     let storyImageInfoStore: StoryImageInfoStore
     let type: StoryQueryType

@@ -29,10 +29,10 @@ class FavoriteStoriesViewModel: StoriesViewModelType, StoriesViewModelOutputs {
     var favoritesStore: FavoritesStore
     var stories: [Story] = [] {
         didSet {
-            delegate?.storiesViewModelUpdated(self)
+            reloadData()
         }
     }
-    weak var delegate: StoriesViewModelDelegate?
+
     let api: APIClient = APIClient()
     
     init(favoritesStore: FavoritesStore) {
