@@ -24,10 +24,11 @@ protocol StoriesViewModelInputs {
 
  protocol StoriesViewModelOutputs: AnyObject {
     var stories: [Story] { get }
+    var favoritesStore: FavoritesStore { get }
     var reloadData: () -> Void { get set }
     var didReceiveServiceError: (Error) -> Void { get set }
-    var pushViewController: (StoryViewController) -> Void { get set }
-    var presentViewController: (UIViewController) -> Void { get set }
+    var openStory: (Story) -> Void { get set }
+    var openURL: (URL) -> Void { get set }
 }
 
 
@@ -43,13 +44,15 @@ class StoriesViewModel: StoriesViewModelType, StoriesViewModelOutputs {
         }
     }
 
+    let favoritesStore: FavoritesStore
+
     var reloadData: () -> Void = { }
 
     var didReceiveServiceError: (Error) -> Void = { _ in }
 
-    var pushViewController: (StoryViewController) -> Void = { _ in }
+    var openStory: (Story) -> Void = { _ in }
 
-    var presentViewController: (UIViewController) -> Void = { _ in }
+    var openURL: (URL) -> Void = { _ in }
 
     let storyImageInfoStore: StoryImageInfoStore
 
@@ -58,8 +61,6 @@ class StoriesViewModel: StoriesViewModelType, StoriesViewModelOutputs {
     private let type: StoryQueryType
 
     private var hasMore: Bool = false
-
-    private var favoritesStore: FavoritesStore
 
     init(storyQueryType type: StoryQueryType, storyStore: StoryStore, storyImageInfoStore: StoryImageInfoStore, favoritesStore: FavoritesStore) {
         self.type = type
@@ -107,15 +108,15 @@ extension StoriesViewModel: StoriesViewModelInputs {
     }
 
     func storyCellCommentButtonTapped(at indexPath: IndexPath) {
-        pushViewController(StoryViewController(story: stories[indexPath.row], favoritesStore: favoritesStore))
+        openStory(stories[indexPath.row])
     }
 
     func didSelectRowAt(_ indexPath: IndexPath) {
         let story = stories[indexPath.row]
         if let url = story.url, let url = URL(string: url) {
-            presentViewController(SFSafariViewController(url: url))
+            outputs.openURL(url)
         } else {
-            pushViewController(StoryViewController(story: story, favoritesStore: favoritesStore))
+            outputs.openStory(story)
         }
     }
     

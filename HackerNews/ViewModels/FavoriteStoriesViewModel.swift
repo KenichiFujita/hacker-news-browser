@@ -18,15 +18,15 @@ class FavoriteStoriesViewModel: StoriesViewModelType, StoriesViewModelOutputs {
 
     var didReceiveServiceError: (Error) -> Void = { _ in }
 
-    var pushViewController: (StoryViewController) -> Void = { _ in }
+    var openURL: (URL) -> Void = { url in }
 
-    var presentViewController: (UIViewController) -> Void = { _ in }
+    var openStory: (Story) -> Void = { story in }
 
     var hasMore: Bool = false
     var canShowInstruction: Bool {
         return true
     }
-    var favoritesStore: FavoritesStore
+    let favoritesStore: FavoritesStore
 
     var stories: [Story] = [] {
         didSet {

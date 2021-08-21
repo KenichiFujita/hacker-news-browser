@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SafariServices
 
 class StoriesViewController: UIViewController {
 
@@ -76,14 +77,14 @@ class StoriesViewController: UIViewController {
             strongSelf.present(alert, animated: true, completion: nil)
         }
 
-        viewModel.outputs.pushViewController = { [weak self] viewController in
+        viewModel.outputs.openURL = { [weak self] url in
             guard let strongSelf = self else { return }
-            strongSelf.navigationController?.pushViewController(viewController, animated: true)
+            strongSelf.present(SFSafariViewController(url: url), animated: true)
         }
 
-        viewModel.outputs.presentViewController = { [weak self] viewController in
+        viewModel.outputs.openStory = { [weak self] story in
             guard let strongSelf = self else { return }
-            strongSelf.present(viewController, animated: true)
+            strongSelf.navigationController?.pushViewController(StoryViewController(story: story, favoritesStore: strongSelf.viewModel.outputs.favoritesStore), animated: true)
         }
     }
     
