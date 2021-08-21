@@ -67,21 +67,18 @@ class StoriesViewModel: StoriesViewModelType, StoriesViewModelOutputs {
 
     private func load(offset: Int = 0) {
         hasMore = false
-        store.stories(for: self.type,
-                      offset: offset,
-                      limit: 10) { [weak self] (result) in
+        store.stories(for: self.type, offset: offset, limit: 10) { [weak self] (result) in
             guard let strongSelf = self else { return }
-            if case .success(let stories) = result {
+            switch result {
+            case .success(let stories):
                 if offset == 0 {
                     strongSelf.stories = stories
                 } else {
                     strongSelf.stories.append(contentsOf: stories)
                 }
-                if stories.count < 10 {
-                    strongSelf.hasMore = false
-                } else {
-                    strongSelf.hasMore = true
-                }
+                strongSelf.hasMore = stories.count == 10 ? true : false
+            case .failure(let error):
+                strongSelf.didReceiveServiceError(error)
             }
         }
     }
