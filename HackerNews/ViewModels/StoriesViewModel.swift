@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import SafariServices
 
 protocol StoriesViewModelType: AnyObject {
     var inputs: StoriesViewModelInputs { get }
@@ -113,7 +112,7 @@ extension StoriesViewModel: StoriesViewModelInputs {
 
     func didSelectRowAt(_ indexPath: IndexPath) {
         let story = stories[indexPath.row]
-        if let url = story.url, let url = URL(string: url) {
+        if let urlString = story.url, let url = URL(string: urlString) {
             outputs.openURL(url)
         } else {
             outputs.openStory(story)
