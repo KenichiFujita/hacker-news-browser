@@ -8,11 +8,13 @@
 
 import UIKit
 
-protocol StoriesViewModelDelegate: class {
+protocol StoriesViewModelDelegate: AnyObject {
     func storiesViewModelUpdated(_ viewModel: StoriesViewModelType)
 }
 
-protocol StoriesViewModelType: class {
+protocol StoriesViewModelType: AnyObject {
+    var inputs: StoriesViewModelInputs { get }
+    var outputs: StoriesViewModelOutputs { get }
     var stories: [Story] { get }
     var hasMore: Bool { get }
     var delegate: StoriesViewModelDelegate? { get set }
@@ -23,8 +25,29 @@ protocol StoriesViewModelType: class {
     func lastCellWillDisplay()
 }
 
+protocol StoriesViewModelInputs {
+    func viewDidLoad()
+    func didPullToRefresh()
+    func lastCellWillDisplay()
+    func storyCellCommentButtonTapped(at indexPath: IndexPath)
+    func didSelectRowAt(_ indexPath: IndexPath)
+}
 
-class StoriesViewModel: StoriesViewModelType {
+protocol StoriesViewModelOutputs: AnyObject {
+   var stories: [Story] { get }
+   var favoritesStore: FavoritesStore { get }
+   var reloadData: () -> Void { get set }
+   var didReceiveServiceError: (Error) -> Void { get set }
+   var openStory: (Story) -> Void { get set }
+   var openURL: (URL) -> Void { get set }
+}
+
+
+class StoriesViewModel: StoriesViewModelType, StoriesViewModelOutputs {
+
+    var inputs: StoriesViewModelInputs { return self }
+
+    var outputs: StoriesViewModelOutputs { return self }
 
     private(set) var stories: [Story] = [] {
         didSet {
@@ -40,26 +63,19 @@ class StoriesViewModel: StoriesViewModelType {
       return false
     }
     var favoritesStore: FavoritesStore
+    var reloadData: () -> Void = { }
+
+    var didReceiveServiceError: (Error) -> Void = { _ in }
+
+    var openStory: (Story) -> Void = { _ in }
+
+    var openURL: (URL) -> Void = { _ in }
 
     init(storyQueryType type: StoryQueryType, storyStore: StoryStore, storyImageInfoStore: StoryImageInfoStore, favoritesStore: FavoritesStore) {
         self.type = type
         self.store = storyStore
         self.storyImageInfoStore = storyImageInfoStore
         self.favoritesStore = favoritesStore
-    }
-
-    func viewDidLoad() {
-        load()
-    }
-
-    func didPullToRefresh() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            self.load()
-        }
-    }
-
-    func lastCellWillDisplay() {
-        load(offset: stories.count)
     }
 
     private func load(offset: Int = 0) {
@@ -83,4 +99,30 @@ class StoriesViewModel: StoriesViewModelType {
         }
     }
 
+}
+
+extension StoriesViewModel: StoriesViewModelInputs {
+
+    func viewDidLoad() {
+        load()
+    }
+
+    func didPullToRefresh() {
+
+    }
+
+    func lastCellWillDisplay() {
+        if hasMore {
+            load(offset: stories.count)
+        }
+    }
+
+    func storyCellCommentButtonTapped(at indexPath: IndexPath) {
+        openStory(stories[indexPath.row])
+    }
+
+    func didSelectRowAt(_ indexPath: IndexPath) {
+
+    }
+    
 }

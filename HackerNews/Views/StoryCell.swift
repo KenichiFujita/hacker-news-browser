@@ -9,7 +9,7 @@
 import UIKit
 import Kingfisher
 
-protocol StoryCellDelegate: class {
+protocol StoryCellDelegate: AnyObject {
     func storyCellCommentButtonTapped(_ cell: StoryCell)
 }
 
