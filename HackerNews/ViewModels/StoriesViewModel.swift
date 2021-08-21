@@ -106,7 +106,12 @@ extension StoriesViewModel: StoriesViewModelInputs {
     }
 
     func didSelectRowAt(_ indexPath: IndexPath) {
-
+        let story = stories[indexPath.row]
+        if let urlString = story.url, let url = URL(string: urlString) {
+            outputs.openURL(url)
+        } else {
+            outputs.openStory(story)
+        }
     }
     
 }
