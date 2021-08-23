@@ -23,11 +23,11 @@ class StoryViewController: UIViewController {
         let tableView = UITableView()
         tableView.backgroundColor = .systemBackground
         tableView.separatorStyle = .none
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 100
+        tableView.estimatedRowHeight = 500
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(CommentCell.self, forCellReuseIdentifier: "CommentCell")
         tableView.register(StoryViewHeaderCell.self, forCellReuseIdentifier: "StoryViewHeaderCell")
+        tableView.allowsSelection = false
         return tableView
     }()
 
@@ -198,10 +198,6 @@ extension StoryViewController: UITableViewDelegate, UITableViewDataSource {
         } else {
             self.title = story.title
         }
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableView.automaticDimension
     }
     
 }

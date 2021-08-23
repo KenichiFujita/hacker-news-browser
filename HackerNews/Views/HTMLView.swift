@@ -29,8 +29,7 @@ class HTMLView: UIView {
         textView.isScrollEnabled = false
         textView.isEditable = false
         textView.backgroundColor = .clear
-        textView.textContainer.lineBreakMode = .byWordWrapping
-        textView.textContainer.maximumNumberOfLines = 0
+        textView.textContainer.lineFragmentPadding = 0
         return textView
     }()
         
@@ -40,10 +39,10 @@ class HTMLView: UIView {
         self.addSubview(htmlTextView)
 
         NSLayoutConstraint.activate([
-        htmlTextView.topAnchor.constraint(equalTo: self.topAnchor),
-        htmlTextView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-        htmlTextView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10),
-        htmlTextView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+            htmlTextView.topAnchor.constraint(equalTo: topAnchor),
+            htmlTextView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            htmlTextView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            htmlTextView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
     
