@@ -12,13 +12,13 @@ import SafariServices
 class StoriesViewController: UIViewController {
 
     private let viewModel: StoriesViewModelType
+    private let dataSource = StoriesDataSource()
 
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = .systemBackground
         tableView.estimatedRowHeight = 100
-        tableView.register(StoryCell.self, forCellReuseIdentifier: "StoryCell")
         return tableView
     }()
 
@@ -54,8 +54,9 @@ class StoriesViewController: UIViewController {
         super.viewDidLoad()
 
         tableView.delegate = self
-        tableView.dataSource = self
+        tableView.dataSource = dataSource
         tableView.refreshControl = self.refreshControl
+        dataSource.registerCellClass(tableView)
         refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
         bind()
 
@@ -63,10 +64,12 @@ class StoriesViewController: UIViewController {
     }
 
     func bind() {
-        viewModel.outputs.reloadData = {
-            self.tableView.reloadData()
-            if self.refreshControl.isRefreshing {
-                self.refreshControl.endRefreshing()
+        viewModel.outputs.reloadData = { [weak self] stories in
+            guard let strongSelf = self else { return }
+            strongSelf.dataSource.load(stories: stories)
+            strongSelf.tableView.reloadData()
+            if strongSelf.refreshControl.isRefreshing {
+                strongSelf.refreshControl.endRefreshing()
             }
         }
 
@@ -105,20 +108,7 @@ class StoriesViewController: UIViewController {
 }
 
 
-extension StoriesViewController: UITableViewDelegate, UITableViewDataSource {
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.outputs.stories.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let storyCell = tableView.dequeueReusableCell(withIdentifier: "StoryCell", for: indexPath) as? StoryCell else {
-            return UITableViewCell()
-        }
-        storyCell.delegate = self
-        storyCell.configure(with: viewModel.outputs.stories[indexPath.row])
-        return storyCell
-    }
+extension StoriesViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         viewModel.inputs.didSelectRowAt(indexPath)

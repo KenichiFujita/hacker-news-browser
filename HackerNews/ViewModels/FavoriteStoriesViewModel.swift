@@ -14,7 +14,7 @@ class FavoriteStoriesViewModel: StoriesViewModelType, StoriesViewModelOutputs {
 
     var outputs: StoriesViewModelOutputs { return self }
 
-    var reloadData: () -> Void = { }
+    var reloadData: ([Story]) -> Void = { _ in }
 
     var didReceiveServiceError: (Error) -> Void = { _ in }
 
@@ -30,7 +30,7 @@ class FavoriteStoriesViewModel: StoriesViewModelType, StoriesViewModelOutputs {
 
     var stories: [Story] = [] {
         didSet {
-            reloadData()
+            reloadData(stories)
         }
     }
 

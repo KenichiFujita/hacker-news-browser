@@ -22,9 +22,8 @@ protocol StoriesViewModelInputs {
 }
 
  protocol StoriesViewModelOutputs: AnyObject {
-    var stories: [Story] { get }
     var favoritesStore: FavoritesStore { get }
-    var reloadData: () -> Void { get set }
+    var reloadData: ([Story]) -> Void { get set }
     var didReceiveServiceError: (Error) -> Void { get set }
     var openStory: (Story) -> Void { get set }
     var openURL: (URL) -> Void { get set }
@@ -37,15 +36,15 @@ class StoriesViewModel: StoriesViewModelType, StoriesViewModelOutputs {
 
     var outputs: StoriesViewModelOutputs { return self }
 
-    var stories: [Story] = [] {
+    private var stories: [Story] = [] {
         didSet {
-            reloadData()
+            reloadData(stories)
         }
     }
 
     let favoritesStore: FavoritesStore
 
-    var reloadData: () -> Void = { }
+    var reloadData: ([Story]) -> Void = { _ in }
 
     var didReceiveServiceError: (Error) -> Void = { _ in }
 
