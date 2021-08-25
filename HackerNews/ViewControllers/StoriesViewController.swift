@@ -56,7 +56,7 @@ class StoriesViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = dataSource
         tableView.refreshControl = self.refreshControl
-        dataSource.registerCellClass(tableView)
+        dataSource.registerCellClass(tableView: tableView)
         refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
         bind()
 

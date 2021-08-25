@@ -18,7 +18,7 @@ final class StoriesDataSource: NSObject, UITableViewDataSource {
         self.stories = stories
     }
 
-    func registerCellClass(_ tableView: UITableView) {
+    func registerCellClass(tableView: UITableView) {
         tableView.register(StoryCell.self, forCellReuseIdentifier: "\(StoryCell.self)")
     }
 
