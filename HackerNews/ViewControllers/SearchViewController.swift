@@ -14,10 +14,10 @@ class SearchViewController: UIViewController {
     var viewModel: SearchViewModel
     var stories: [Story] = []
     
-    init(viewModel: SearchViewModel, title: String) {
+    init(viewModel: SearchViewModel, tabBarItemTitle: String) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        self.title = title
+        tabBarItem.title = tabBarItemTitle
     }
     
     required init?(coder: NSCoder) {

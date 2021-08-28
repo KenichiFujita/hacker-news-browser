@@ -27,10 +27,10 @@ class StoriesViewController: UIViewController {
         return refreshControl
     }()
     
-    init(viewModel: StoriesViewModelType, title: String) {
+    init(viewModel: StoriesViewModelType, tabBarItemTitle: String) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        self.title = title
+        tabBarItem.title = tabBarItemTitle
     }
     
     required init?(coder: NSCoder) {
@@ -63,6 +63,12 @@ class StoriesViewController: UIViewController {
         viewModel.inputs.viewDidLoad()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
+
     func bind() {
         viewModel.outputs.reloadData = { [weak self] stories in
             guard let strongSelf = self else { return }
@@ -91,16 +97,6 @@ class StoriesViewController: UIViewController {
         }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationItem.title = title
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        navigationItem.title = ""
-    }
-    
     @objc func didPullToRefresh() {
         viewModel.inputs.didPullToRefresh()
     }
@@ -116,6 +112,7 @@ extension StoriesViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        (cell as? StoryCell)?.delegate = self
         if indexPath.row == tableView.numberOfRows(inSection: 0) - 1 {
             viewModel.inputs.lastCellWillDisplay()
         }

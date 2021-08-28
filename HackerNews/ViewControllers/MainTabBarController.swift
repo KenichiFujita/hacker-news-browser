@@ -10,60 +10,36 @@ import UIKit
 
 class MainTabBarController: UITabBarController {
 
-    private let storyStore = StoryStore()
+    private let storyStore: StoryStore
     private let favoritesStore = FavoritesStore()
     private let storyImageInfoStore = StoryImageInfoStore()
-    
+    private let api = APIClient()
+
+    init() {
+        storyStore = StoryStore(api: api)
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let homeNavigationController = UINavigationController(
+            rootViewController: HomeViewController(
+                storyStore: storyStore,
+                favoritesStore: favoritesStore,
+                storyImageInfoStore: storyImageInfoStore,
+                api: api)
+        )
+        homeNavigationController.tabBarItem.image = UIImage(systemName: "house")
+        
         viewControllers = [
-            navigationController(navigationBarTitle: "Top Stories",
-                                 tabBarItemTitle: "Top",
-                                 tabBarIcon: UIImage(systemName: "list.number"),
-                                 viewModel: StoriesViewModel(storyQueryType: .top,
-                                                             storyStore: storyStore,
-                                                             storyImageInfoStore: storyImageInfoStore,
-                                                             favoritesStore: favoritesStore)),
-            navigationController(navigationBarTitle: "Ask HN",
-                                 tabBarItemTitle: "Ask",
-                                 tabBarIcon: UIImage(systemName: "questionmark"),
-                                 viewModel: StoriesViewModel(storyQueryType: .ask,
-                                                             storyStore: storyStore,
-                                                             storyImageInfoStore: storyImageInfoStore,
-                                                             favoritesStore: favoritesStore)),
-            navigationController(navigationBarTitle: "Show HN",
-                                 tabBarItemTitle: "Show",
-                                 tabBarIcon: UIImage(systemName: "globe"),
-                                 viewModel: StoriesViewModel(storyQueryType: .show,
-                                                             storyStore: storyStore,
-                                                             storyImageInfoStore: storyImageInfoStore,
-                                                             favoritesStore: favoritesStore)),
-            searchNavigationController(navigationBarTitle: "Search"),
-            navigationController(navigationBarTitle: "Favorites",
-                                 tabBarItemTitle: "Favorite",
-                                 tabBarIcon: UIImage(systemName: "star"),
-                                 viewModel: FavoriteStoriesViewModel(favoritesStore: favoritesStore))
+            homeNavigationController
         ]
         
-    }
-    
-    private func navigationController(navigationBarTitle: String, tabBarItemTitle: String, tabBarIcon: UIImage?, viewModel: StoriesViewModelType) -> UINavigationController {
-        let storiesViewController = StoriesViewController(viewModel: viewModel, title: navigationBarTitle)
-        let navigationController = UINavigationController(rootViewController: storiesViewController)
-        navigationController.tabBarItem.title = tabBarItemTitle
-        navigationController.navigationBar.prefersLargeTitles = true
-        navigationController.tabBarItem.image = tabBarIcon
-        return navigationController
-    }
-    
-    private func searchNavigationController(navigationBarTitle: String) -> UINavigationController {
-        let searchViewController = SearchViewController(viewModel: SearchViewModel(favoritesStore: favoritesStore), title: navigationBarTitle)
-        let navigationController = UINavigationController(rootViewController: searchViewController)
-        navigationController.tabBarItem.title = "Search"
-        navigationController.tabBarItem.image = UIImage(systemName: "magnifyingglass")
-        navigationController.navigationBar.prefersLargeTitles = true
-        return navigationController
     }
 
 }

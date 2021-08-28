@@ -18,6 +18,7 @@
 		221FD6662463594600BCE17E /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22029D4B2387A80B008CF290 /* APIClient.swift */; };
 		221FD66F2465F3F000BCE17E /* UIFont+HN.swift in Sources */ = {isa = PBXBuildFile; fileRef = 221FD66E2465F3F000BCE17E /* UIFont+HN.swift */; };
 		221FD6712465F43A00BCE17E /* Date+HN.swift in Sources */ = {isa = PBXBuildFile; fileRef = 221FD6702465F43A00BCE17E /* Date+HN.swift */; };
+		2229407526D7087100792D7A /* HNBUI in Frameworks */ = {isa = PBXBuildFile; productRef = 2229407426D7087100792D7A /* HNBUI */; };
 		223F3E4923E9140300C2AE52 /* StoriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 223F3E4823E9140300C2AE52 /* StoriesViewModel.swift */; };
 		223F3E4B23E9141900C2AE52 /* FavoriteStoriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 223F3E4A23E9141900C2AE52 /* FavoriteStoriesViewModel.swift */; };
 		224122BC240E01B80096CF6B /* StoryImageInfoStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224122BB240E01B80096CF6B /* StoryImageInfoStore.swift */; };
@@ -52,6 +53,7 @@
 		228AA6FE2381B0C900B4D512 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 228AA6FC2381B0C900B4D512 /* LaunchScreen.storyboard */; };
 		228AA7092381B0C900B4D512 /* HackerNewsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228AA7082381B0C900B4D512 /* HackerNewsTests.swift */; };
 		228AA7142381B0C900B4D512 /* HackerNewsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228AA7132381B0C900B4D512 /* HackerNewsUITests.swift */; };
+		2290551826D95D2B00F802DB /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2290551726D95D2B00F802DB /* HomeViewController.swift */; };
 		2290BE5823CEAB8E00FBA2D4 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 2290BE5723CEAB8E00FBA2D4 /* SwiftSoup */; };
 		2290BE5A23CEB5F300FBA2D4 /* HTMLView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2290BE5923CEB5F300FBA2D4 /* HTMLView.swift */; };
 		229375B026D48FCB00734577 /* StoriesDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229375AF26D48FCB00734577 /* StoriesDataSource.swift */; };
@@ -157,6 +159,7 @@
 		228AA70F2381B0C900B4D512 /* HackerNewsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HackerNewsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		228AA7132381B0C900B4D512 /* HackerNewsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HackerNewsUITests.swift; sourceTree = "<group>"; };
 		228AA7152381B0C900B4D512 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2290551726D95D2B00F802DB /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		2290BE5923CEB5F300FBA2D4 /* HTMLView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLView.swift; sourceTree = "<group>"; };
 		229375AF26D48FCB00734577 /* StoriesDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoriesDataSource.swift; sourceTree = "<group>"; };
 		22B074512528BE1300F1C42B /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
@@ -178,6 +181,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2229407526D7087100792D7A /* HNBUI in Frameworks */,
 				227CF53823CD4524000D2A52 /* Kingfisher in Frameworks */,
 				2290BE5823CEAB8E00FBA2D4 /* SwiftSoup in Frameworks */,
 			);
@@ -239,6 +243,7 @@
 			isa = PBXGroup;
 			children = (
 				227CF53223C57731000D2A52 /* MainTabBarController.swift */,
+				2290551726D95D2B00F802DB /* HomeViewController.swift */,
 				228AA6F52381B0C600B4D512 /* StoriesViewController.swift */,
 				22466EB0242987370012636F /* SearchViewController.swift */,
 				2249FF2B2395E31B007FDCF2 /* StoryViewController.swift */,
@@ -402,6 +407,7 @@
 			packageProductDependencies = (
 				227CF53723CD4524000D2A52 /* Kingfisher */,
 				2290BE5723CEAB8E00FBA2D4 /* SwiftSoup */,
+				2229407426D7087100792D7A /* HNBUI */,
 			);
 			productName = HackerNews;
 			productReference = 228AA6EE2381B0C600B4D512 /* HackerNews.app */;
@@ -502,6 +508,7 @@
 			packageReferences = (
 				227CF53623CD4524000D2A52 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				2290BE5623CEAB8E00FBA2D4 /* XCRemoteSwiftPackageReference "SwiftSoup" */,
+				2229407326D7087100792D7A /* XCRemoteSwiftPackageReference "HNBUI" */,
 			);
 			productRefGroup = 228AA6EF2381B0C600B4D512 /* Products */;
 			projectDirPath = "";
@@ -578,6 +585,7 @@
 				22B074522528BE1300F1C42B /* SearchViewModel.swift in Sources */,
 				2249FF302398913A007FDCF2 /* CommentCell.swift in Sources */,
 				2290BE5A23CEB5F300FBA2D4 /* HTMLView.swift in Sources */,
+				2290551826D95D2B00F802DB /* HomeViewController.swift in Sources */,
 				22029D482387941C008CF290 /* StoryCell.swift in Sources */,
 				22CD276024228E5A006CF0C4 /* StoryImageInfoCache.swift in Sources */,
 				221F2AA923DCAA3B00A7C71C /* FavoritesStore.swift in Sources */,
@@ -1001,6 +1009,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		2229407326D7087100792D7A /* XCRemoteSwiftPackageReference "HNBUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/KenichiFujita/HNBUI";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		227CF53623CD4524000D2A52 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -1020,6 +1036,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2229407426D7087100792D7A /* HNBUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2229407326D7087100792D7A /* XCRemoteSwiftPackageReference "HNBUI" */;
+			productName = HNBUI;
+		};
 		2246F6A725B36E1E00F98594 /* KingfisherSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 227CF53623CD4524000D2A52 /* XCRemoteSwiftPackageReference "Kingfisher" */;

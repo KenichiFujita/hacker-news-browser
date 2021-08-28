@@ -77,6 +77,12 @@ class StoryViewController: UIViewController {
         shareBarButtonItem.action = #selector(shareBarButtonTapped)
         navigationItem.rightBarButtonItems = [favoritesBarButtonItem, shareBarButtonItem]
     }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
     
     private func getComments(of story: Story) {
         var commentsDict: [Int: [Comment]] = [:]
