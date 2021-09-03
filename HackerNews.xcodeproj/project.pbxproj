@@ -18,7 +18,6 @@
 		221FD6662463594600BCE17E /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22029D4B2387A80B008CF290 /* APIClient.swift */; };
 		221FD66F2465F3F000BCE17E /* UIFont+HN.swift in Sources */ = {isa = PBXBuildFile; fileRef = 221FD66E2465F3F000BCE17E /* UIFont+HN.swift */; };
 		221FD6712465F43A00BCE17E /* Date+HN.swift in Sources */ = {isa = PBXBuildFile; fileRef = 221FD6702465F43A00BCE17E /* Date+HN.swift */; };
-		2229407526D7087100792D7A /* HNBUI in Frameworks */ = {isa = PBXBuildFile; productRef = 2229407426D7087100792D7A /* HNBUI */; };
 		223F3E4923E9140300C2AE52 /* StoriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 223F3E4823E9140300C2AE52 /* StoriesViewModel.swift */; };
 		223F3E4B23E9141900C2AE52 /* FavoriteStoriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 223F3E4A23E9141900C2AE52 /* FavoriteStoriesViewModel.swift */; };
 		224122BC240E01B80096CF6B /* StoryImageInfoStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224122BB240E01B80096CF6B /* StoryImageInfoStore.swift */; };
@@ -56,6 +55,7 @@
 		2290551826D95D2B00F802DB /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2290551726D95D2B00F802DB /* HomeViewController.swift */; };
 		2290BE5823CEAB8E00FBA2D4 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 2290BE5723CEAB8E00FBA2D4 /* SwiftSoup */; };
 		2290BE5A23CEB5F300FBA2D4 /* HTMLView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2290BE5923CEB5F300FBA2D4 /* HTMLView.swift */; };
+		2292948226E2703B00570DA6 /* HNBUI in Frameworks */ = {isa = PBXBuildFile; productRef = 2292948126E2703B00570DA6 /* HNBUI */; };
 		229375B026D48FCB00734577 /* StoriesDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229375AF26D48FCB00734577 /* StoriesDataSource.swift */; };
 		22B074522528BE1300F1C42B /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B074512528BE1300F1C42B /* SearchViewModel.swift */; };
 		22CD276024228E5A006CF0C4 /* StoryImageInfoCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22CD275F24228E5A006CF0C4 /* StoryImageInfoCache.swift */; };
@@ -181,7 +181,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2229407526D7087100792D7A /* HNBUI in Frameworks */,
+				2292948226E2703B00570DA6 /* HNBUI in Frameworks */,
 				227CF53823CD4524000D2A52 /* Kingfisher in Frameworks */,
 				2290BE5823CEAB8E00FBA2D4 /* SwiftSoup in Frameworks */,
 			);
@@ -407,7 +407,7 @@
 			packageProductDependencies = (
 				227CF53723CD4524000D2A52 /* Kingfisher */,
 				2290BE5723CEAB8E00FBA2D4 /* SwiftSoup */,
-				2229407426D7087100792D7A /* HNBUI */,
+				2292948126E2703B00570DA6 /* HNBUI */,
 			);
 			productName = HackerNews;
 			productReference = 228AA6EE2381B0C600B4D512 /* HackerNews.app */;
@@ -1036,11 +1036,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		2229407426D7087100792D7A /* HNBUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 2229407326D7087100792D7A /* XCRemoteSwiftPackageReference "HNBUI" */;
-			productName = HNBUI;
-		};
 		2246F6A725B36E1E00F98594 /* KingfisherSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 227CF53623CD4524000D2A52 /* XCRemoteSwiftPackageReference "Kingfisher" */;
@@ -1060,6 +1055,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2290BE5623CEAB8E00FBA2D4 /* XCRemoteSwiftPackageReference "SwiftSoup" */;
 			productName = SwiftSoup;
+		};
+		2292948126E2703B00570DA6 /* HNBUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2229407326D7087100792D7A /* XCRemoteSwiftPackageReference "HNBUI" */;
+			productName = HNBUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

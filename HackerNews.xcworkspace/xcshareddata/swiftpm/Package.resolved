@@ -6,7 +6,7 @@
         "repositoryURL": "https://github.com/KenichiFujita/HNBUI",
         "state": {
           "branch": "main",
-          "revision": "66a4cd5120e711a911c113a21ddcec9bb4e63e4c",
+          "revision": "f7d9920e90e872158a16098b9a40f6d26b9dacc5",
           "version": null
         }
       },
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/onevcat/Kingfisher.git",
         "state": {
           "branch": null,
-          "revision": "2f9d171f17869768f6dbec1d039b851e2503af35",
-          "version": "5.12.0"
+          "revision": "1a0c2df04b31ed7aa318354f3583faea24f006fc",
+          "version": "5.15.8"
         }
       },
       {
