@@ -58,8 +58,6 @@ class StoriesViewModel: StoriesViewModelType, StoriesViewModelOutputs {
 
     private let type: StoryQueryType
 
-    private var hasMore: Bool = false
-
     init(storyQueryType type: StoryQueryType, storyStore: StoryStore, storyImageInfoStore: StoryImageInfoStore, favoritesStore: FavoritesStore) {
         self.type = type
         self.store = storyStore
@@ -67,20 +65,17 @@ class StoriesViewModel: StoriesViewModelType, StoriesViewModelOutputs {
         self.favoritesStore = favoritesStore
     }
 
-    private func load(offset: Int = 0) {
-        hasMore = false
-        store.stories(for: self.type, offset: offset, limit: 10) { [weak self] (result) in
-            guard let strongSelf = self else { return }
+    private func load(toRefresh: Bool = false) {
+        store.stories(for: type, toRefresh: toRefresh) { [weak self] (result) in
             switch result {
-            case .success(let stories):
-                if offset == 0 {
-                    strongSelf.stories = stories
+            case .success(let receivedStories):
+                if toRefresh {
+                    self?.stories = receivedStories
                 } else {
-                    strongSelf.stories.append(contentsOf: stories)
+                    self?.stories.append(contentsOf: receivedStories)
                 }
-                strongSelf.hasMore = stories.count == 10 ? true : false
             case .failure(let error):
-                strongSelf.didReceiveServiceError(error)
+                self?.didReceiveServiceError(error)
             }
         }
     }
@@ -95,14 +90,12 @@ extension StoriesViewModel: StoriesViewModelInputs {
 
     func didPullToRefresh() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            self.load()
+            self.load(toRefresh: true)
         }
     }
 
     func lastCellWillDisplay() {
-        if hasMore {
-            load(offset: stories.count)
-        }
+        load()
     }
 
     func storyCellCommentButtonTapped(at indexPath: IndexPath) {

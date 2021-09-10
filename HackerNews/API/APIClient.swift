@@ -12,6 +12,16 @@ enum StoryQueryType: String {
     case top
     case ask
     case show
+    fileprivate var path: String {
+        switch self {
+        case .top:
+            return "/news"
+        case .ask:
+            return "/ask"
+        case .show:
+            return "/show"
+        }
+    }
 }
 
 private enum API {
@@ -19,7 +29,7 @@ private enum API {
     case ids(StoryQueryType)
     case searchStories(String)
     case comment(Int)
-    
+
     fileprivate var url: URL? {
         switch self {
         case .getItem(let id):
@@ -34,15 +44,40 @@ private enum API {
     }
 }
 
+struct HNURL {
+
+    private let host: String
+    private let path: String
+    private let queryItems: [URLQueryItem]?
+
+    var url: URL {
+        var urlComponents = URLComponents()
+        urlComponents.scheme = "https"
+        urlComponents.host = host
+        urlComponents.path = path
+        urlComponents.queryItems = queryItems
+        guard let url = urlComponents.url else { preconditionFailure() }
+        return url
+    }
+
+    static func stories(for type: StoryQueryType, queryItems: [URLQueryItem]? = nil) -> HNURL {
+        return HNURL(host: "news.ycombinator.com",
+                     path: type.path,
+                     queryItems: queryItems)
+    }
+
+}
+
 enum APIClientError: Error {
     case invalidURL
     case domainError
     case decodingError
     case unknownError
     case cancel
+    case parsingError
 }
 
-private struct Item: Decodable {
+private struct Item: Decodable, StoryProtocol {
     fileprivate let id: Int?
     private let deleted: Bool?
     fileprivate let by: String?
@@ -57,7 +92,7 @@ private struct Item: Decodable {
     fileprivate let title: String?
     private let parts: [Int]?
     fileprivate let descendants: Int?
-    
+
     private enum CodingKeys: String, CodingKey {
         case date = "time"
         case id
@@ -74,6 +109,18 @@ private struct Item: Decodable {
         case parts
         case descendants
     }
+}
+
+protocol StoryProtocol {
+    var by: String? { get }
+    var descendants: Int? { get }
+    var id: Int? { get }
+    var kids: [Int]? { get }
+    var score: Int? { get }
+    var date: Date { get }
+    var title: String? { get }
+    var url: String? { get }
+    var text: String? { get }
 }
 
 struct Story: Equatable, Identifiable {
@@ -101,7 +148,7 @@ struct Story: Equatable, Identifiable {
 }
 
 extension Story {
-    fileprivate init(_ item: Item) {
+    fileprivate init(_ item: StoryProtocol) {
         self.by = item.by ?? ""
         self.descendants = item.descendants ?? 0
         self.id = item.id ?? 0
@@ -211,6 +258,28 @@ class APIClient {
                 }
             }
         }
+    }
+
+    func stories(for hnUrl: HNURL, completionHandler: @escaping (Result<(stories: [Story], urlQueryItemsOfNextPage: [URLQueryItem]?), APIClientError>) -> Void) {
+        session.dataTask(with: hnUrl.url) { data, response, error in
+            guard let data = data else {
+                if let _ = error {
+                    completionHandler(.failure(.domainError))
+                } else {
+                    completionHandler(.failure(.unknownError))
+                }
+                return
+            }
+            let html = String(decoding: data, as: UTF8.self)
+            do {
+                let hnWebStories = try HNWebParser.parseTopStories(html)
+                let stories: ([Story], [URLQueryItem]?) = (hnWebStories.stories.compactMap { Story($0) }, hnWebStories.urlQueryItemsOfNextPage)
+                completionHandler(.success(stories))
+            }
+            catch {
+                completionHandler(.failure(.parsingError))
+            }
+        }.resume()
     }
     
     func ids(for type: StoryQueryType, completionHandler: @escaping (Result<[Int], APIClientError>) -> Void) {

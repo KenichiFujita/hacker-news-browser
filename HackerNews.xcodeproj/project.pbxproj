@@ -56,6 +56,8 @@
 		2290BE5823CEAB8E00FBA2D4 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 2290BE5723CEAB8E00FBA2D4 /* SwiftSoup */; };
 		2290BE5A23CEB5F300FBA2D4 /* HTMLView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2290BE5923CEB5F300FBA2D4 /* HTMLView.swift */; };
 		2292948226E2703B00570DA6 /* HNBUI in Frameworks */ = {isa = PBXBuildFile; productRef = 2292948126E2703B00570DA6 /* HNBUI */; };
+		229294C026E6900600570DA6 /* HNWebParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229294BF26E6900600570DA6 /* HNWebParser.swift */; };
+		229294C126E6A0B000570DA6 /* HNWebParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229294BF26E6900600570DA6 /* HNWebParser.swift */; };
 		229375B026D48FCB00734577 /* StoriesDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229375AF26D48FCB00734577 /* StoriesDataSource.swift */; };
 		22B074522528BE1300F1C42B /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B074512528BE1300F1C42B /* SearchViewModel.swift */; };
 		22CD276024228E5A006CF0C4 /* StoryImageInfoCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22CD275F24228E5A006CF0C4 /* StoryImageInfoCache.swift */; };
@@ -161,6 +163,7 @@
 		228AA7152381B0C900B4D512 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2290551726D95D2B00F802DB /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		2290BE5923CEB5F300FBA2D4 /* HTMLView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLView.swift; sourceTree = "<group>"; };
+		229294BF26E6900600570DA6 /* HNWebParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNWebParser.swift; sourceTree = "<group>"; };
 		229375AF26D48FCB00734577 /* StoriesDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoriesDataSource.swift; sourceTree = "<group>"; };
 		22B074512528BE1300F1C42B /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		22CD275F24228E5A006CF0C4 /* StoryImageInfoCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryImageInfoCache.swift; sourceTree = "<group>"; };
@@ -276,6 +279,7 @@
 			isa = PBXGroup;
 			children = (
 				22029D4B2387A80B008CF290 /* APIClient.swift */,
+				229294BF26E6900600570DA6 /* HNWebParser.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -592,6 +596,7 @@
 				221FD66F2465F3F000BCE17E /* UIFont+HN.swift in Sources */,
 				228AA6F22381B0C600B4D512 /* AppDelegate.swift in Sources */,
 				22D6A9C425ACFEEB00073C2E /* HackerNewsWidget.intentdefinition in Sources */,
+				229294C026E6900600570DA6 /* HNWebParser.swift in Sources */,
 				22466EB1242987370012636F /* SearchViewController.swift in Sources */,
 				2265D32F23F831C200067B7F /* StoryStore.swift in Sources */,
 				224122BC240E01B80096CF6B /* StoryImageInfoStore.swift in Sources */,
@@ -635,6 +640,7 @@
 				2281823025B07F6800EE0CA1 /* StoryImageInfoCache.swift in Sources */,
 				2281822525B026AA00EE0CA1 /* URL+HN.swift in Sources */,
 				2281820925B004EA00EE0CA1 /* APIClient.swift in Sources */,
+				229294C126E6A0B000570DA6 /* HNWebParser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
