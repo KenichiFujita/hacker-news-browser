@@ -57,12 +57,7 @@ class FavoriteStoriesViewModel: StoriesViewModelType, StoriesViewModelOutputs {
 
     func lastCellWillDisplay() { }
 
-    private func load(needRefreshIds refreshIDs: Bool = false) {
-        api.stories(for: favoritesStore.favorites) { [weak self] (stories) in
-            guard let strongSelf = self else { return }
-            strongSelf.stories = stories
-        }
-    }
+    private func load(needRefreshIds refreshIDs: Bool = false) {}
 
 }
 

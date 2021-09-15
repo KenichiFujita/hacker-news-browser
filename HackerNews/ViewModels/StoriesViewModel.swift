@@ -54,28 +54,42 @@ class StoriesViewModel: StoriesViewModelType, StoriesViewModelOutputs {
 
     let storyImageInfoStore: StoryImageInfoStore
 
-    private let store: StoryStore
-
     private let type: StoryQueryType
 
-    init(storyQueryType type: StoryQueryType, storyStore: StoryStore, storyImageInfoStore: StoryImageInfoStore, favoritesStore: FavoritesStore) {
+    private let api: APIClient
+
+    private var nextPage: Int = 1
+
+    private var hasMore: Bool = true
+
+    private var fetchedIDs: Set<Int> = []
+
+    init(storyQueryType type: StoryQueryType, storyImageInfoStore: StoryImageInfoStore, favoritesStore: FavoritesStore, api: APIClient) {
         self.type = type
-        self.store = storyStore
         self.storyImageInfoStore = storyImageInfoStore
         self.favoritesStore = favoritesStore
+        self.api = api
     }
 
-    private func load(toRefresh: Bool = false) {
-        store.stories(for: type, toRefresh: toRefresh) { [weak self] (result) in
-            switch result {
-            case .success(let receivedStories):
-                if toRefresh {
-                    self?.stories = receivedStories
-                } else {
-                    self?.stories.append(contentsOf: receivedStories)
+    private func load() {
+        guard hasMore else { return }
+        hasMore = false
+        api.stories(for: type, page: nextPage) { [weak self] result in
+            guard let strongSelf = self else { return }
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let stories):
+                    if !stories.isEmpty {
+                        self?.stories.append(contentsOf: stories.filter { story in
+                            !strongSelf.fetchedIDs.contains(story.id)
+                        })
+                        stories.forEach { self?.fetchedIDs.insert($0.id) }
+                        self?.nextPage += 1
+                        self?.hasMore = true
+                    }
+                case .failure(let error):
+                    self?.didReceiveServiceError(error)
                 }
-            case .failure(let error):
-                self?.didReceiveServiceError(error)
             }
         }
     }
@@ -90,7 +104,11 @@ extension StoriesViewModel: StoriesViewModelInputs {
 
     func didPullToRefresh() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            self.load(toRefresh: true)
+            self.nextPage = 1
+            self.hasMore = true
+            self.stories = []
+            self.fetchedIDs = []
+            self.load()
         }
     }
 

@@ -36,17 +36,14 @@ private struct StoryTimeline: TimelineProvider {
     }
 
     private func stories(completionHandler: @escaping ([Story]) -> Void) {
-        api.ids(for: .top) { (result) in
+        api.stories(for: .top, page: 1) { result in
             switch result {
-            case .success(let ids):
-                api.stories(for: Array(ids[0...5])) { (stories) in
-                    completionHandler(stories)
-                }
+            case .success(let stories):
+                completionHandler(stories)
             case .failure(_):
                 completionHandler([])
             }
         }
-        return
     }
 
 }

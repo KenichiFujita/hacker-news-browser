@@ -29,6 +29,7 @@ private enum API {
     case ids(StoryQueryType)
     case searchStories(String)
     case comment(Int)
+    case stories(StoryQueryType, Int)
 
     fileprivate var url: URL? {
         switch self {
@@ -40,6 +41,8 @@ private enum API {
             return URL(string: "http://hn.algolia.com/api/v1/search?query=\(searchText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&tags=story")
         case .comment(let id):
             return URL(string: "http://hn.algolia.com/api/v1/items/\(id)")
+        case .stories(let type, let page):
+            return URL(string: "https://news.ycombinator.com\(type.path)?p=\(page)")
         }
     }
 }
@@ -77,52 +80,6 @@ enum APIClientError: Error {
     case parsingError
 }
 
-private struct Item: Decodable, StoryProtocol {
-    fileprivate let id: Int?
-    private let deleted: Bool?
-    fileprivate let by: String?
-    fileprivate let date: Date
-    fileprivate let text: String?
-    private let dead: Bool?
-    private let parent: Int?
-    private let poll: Int?
-    fileprivate let kids: [Int]?
-    fileprivate let url: String?
-    fileprivate let score: Int?
-    fileprivate let title: String?
-    private let parts: [Int]?
-    fileprivate let descendants: Int?
-
-    private enum CodingKeys: String, CodingKey {
-        case date = "time"
-        case id
-        case deleted
-        case by
-        case text
-        case dead
-        case parent
-        case poll
-        case kids
-        case url
-        case score
-        case title
-        case parts
-        case descendants
-    }
-}
-
-protocol StoryProtocol {
-    var by: String? { get }
-    var descendants: Int? { get }
-    var id: Int? { get }
-    var kids: [Int]? { get }
-    var score: Int? { get }
-    var date: Date { get }
-    var title: String? { get }
-    var url: String? { get }
-    var text: String? { get }
-}
-
 struct Story: Equatable, Identifiable {
     let by: String
     let descendants: Int
@@ -133,6 +90,7 @@ struct Story: Equatable, Identifiable {
     let title: String
     let url: String?
     let text: String?
+    var age: String? = nil
     var type: StoryType {
         if title.hasPrefix("Show HN:") {
             return .show
@@ -143,21 +101,7 @@ struct Story: Equatable, Identifiable {
         }
     }
     var info: String {
-        ["\(score) points", by, date.postTimeAgo].compactMap { $0 }.joined(separator: " · ")
-    }
-}
-
-extension Story {
-    fileprivate init(_ item: StoryProtocol) {
-        self.by = item.by ?? ""
-        self.descendants = item.descendants ?? 0
-        self.id = item.id ?? 0
-        self.commentIDs = item.kids ?? []
-        self.score = item.score ?? 0
-        self.date = item.date
-        self.title = item.title ?? ""
-        self.url = item.url
-        self.text = item.text
+        ["\(score) points", by, (age ?? date.postTimeAgo)].compactMap { $0 }.joined(separator: " · ")
     }
 }
 
@@ -201,67 +145,13 @@ class APIClient {
     init(session: URLSession = URLSession(configuration: .default)) {
         self.session = session
     }
-    
-    private func getItem(id: Int, completionHandler: @escaping (Result<Item, APIClientError>) -> Void) {
-        guard let itemUrl = API.getItem(id).url else {
+
+    func stories(for type: StoryQueryType, page: Int, completionHandler: @escaping (Result<[Story], APIClientError>) -> Void) {
+        guard let url = API.stories(type, page).url else {
             completionHandler(.failure(.invalidURL))
             return
         }
-        session.dataTask(with: itemUrl) { data, response, error in
-            guard let data = data else {
-                if let _ = error {
-                    DispatchQueue.main.async {
-                        completionHandler(.failure(.domainError))
-                    }
-                    return
-                } else {
-                    DispatchQueue.main.async {
-                        completionHandler(.failure(.unknownError))
-                    }
-                    return
-                }
-            }
-            do {
-                let item = try JSONDecoder.hackerNews.decode(Item.self, from: data)
-                DispatchQueue.main.async {
-                    completionHandler(.success(item))
-                }
-            }
-            catch {
-                DispatchQueue.main.async {
-                    completionHandler(.failure(.decodingError))
-                }
-            }
-        }.resume()
-    }
-    
-    func stories(for ids: [Int], completionHandler: @escaping ([Story]) -> Void) {
-        var returningIDs = ids
-        var stories: [Int: Story] = [:]
-        if ids.count == 0 {
-            completionHandler([])
-            return
-        }
-        for id in ids {
-            self.getItem(id: id) { (result) in
-                switch result {
-                case .success(let item):
-                    let story: Story = Story(item)
-                    stories[id] = story
-                case .failure(_):
-                    if let indexToRemove = returningIDs.firstIndex(of: id) {
-                        returningIDs.remove(at: indexToRemove)
-                    }
-                }
-                if stories.count == returningIDs.count {
-                    completionHandler(ids.compactMap { stories[$0] })
-                }
-            }
-        }
-    }
-
-    func stories(for hnUrl: HNURL, completionHandler: @escaping (Result<(stories: [Story], urlQueryItemsOfNextPage: [URLQueryItem]?), APIClientError>) -> Void) {
-        session.dataTask(with: hnUrl.url) { data, response, error in
+        session.dataTask(with: url) { data, response, error in
             guard let data = data else {
                 if let _ = error {
                     completionHandler(.failure(.domainError))
@@ -272,50 +162,12 @@ class APIClient {
             }
             let html = String(decoding: data, as: UTF8.self)
             do {
-                let hnWebStories = try HNWebParser.parseTopStories(html)
-                let stories: ([Story], [URLQueryItem]?) = (hnWebStories.stories.compactMap { Story($0) }, hnWebStories.urlQueryItemsOfNextPage)
+                let stories = try HNWebParser.parseTopStories(html)
                 completionHandler(.success(stories))
             }
             catch {
                 completionHandler(.failure(.parsingError))
             }
-        }.resume()
-    }
-    
-    func ids(for type: StoryQueryType, completionHandler: @escaping (Result<[Int], APIClientError>) -> Void) {
-        guard let url = API.ids(type).url else {
-            completionHandler(.failure(.invalidURL))
-            return
-        }
-        session.dataTask(with: url) { data, response, error in
-            guard let data = data else {
-                if let _ = error {
-                    DispatchQueue.main.async {
-                        completionHandler(.failure(.domainError))
-                    }
-                    return
-                } else {
-                    DispatchQueue.main.async {
-                        completionHandler(.failure(.unknownError))
-                    }
-                    return
-                }
-            }
-            do {
-                let json = try JSONSerialization.jsonObject(with: data, options: [])
-                if let json = json as? [Int] {
-                    let ids = Array(json[0..<min(200, json.count)])
-                    DispatchQueue.main.async {
-                        completionHandler(.success(ids))
-                    }
-                }
-            }
-            catch {
-                DispatchQueue.main.async {
-                    completionHandler(.failure(.decodingError))
-                }
-            }
-            
         }.resume()
     }
     

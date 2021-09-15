@@ -10,13 +10,11 @@ import UIKit
 
 class MainTabBarController: UITabBarController {
 
-    private let storyStore: StoryStore
     private let favoritesStore = FavoritesStore()
     private let storyImageInfoStore = StoryImageInfoStore()
     private let api = APIClient()
 
     init() {
-        storyStore = StoryStore(api: api)
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -29,7 +27,6 @@ class MainTabBarController: UITabBarController {
         
         let homeNavigationController = UINavigationController(
             rootViewController: HomeViewController(
-                storyStore: storyStore,
                 favoritesStore: favoritesStore,
                 storyImageInfoStore: storyImageInfoStore,
                 api: api)

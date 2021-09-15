@@ -11,13 +11,11 @@ import HNBUI
 
 class HomeViewController: TabBarController {
 
-    private let storyStore: StoryStore
     private let favoritesStore: FavoritesStore
     private let storyImageInfoStore: StoryImageInfoStore
     private let api: APIClient
 
-    init(storyStore: StoryStore, favoritesStore: FavoritesStore, storyImageInfoStore: StoryImageInfoStore, api: APIClient) {
-        self.storyStore = storyStore
+    init(favoritesStore: FavoritesStore, storyImageInfoStore: StoryImageInfoStore, api: APIClient) {
         self.favoritesStore = favoritesStore
         self.storyImageInfoStore = storyImageInfoStore
         self.api = api
@@ -34,25 +32,25 @@ class HomeViewController: TabBarController {
         let topStoriesViewController = StoriesViewController(
             viewModel: StoriesViewModel(
                 storyQueryType: .top,
-                storyStore: storyStore,
                 storyImageInfoStore: storyImageInfoStore,
-                favoritesStore: favoritesStore),
+                favoritesStore: favoritesStore,
+                api: api),
             tabBarItemTitle: "top")
 
         let askStoriesViewController = StoriesViewController(
             viewModel: StoriesViewModel(
                 storyQueryType: .ask,
-                storyStore: storyStore,
                 storyImageInfoStore: storyImageInfoStore,
-                favoritesStore: favoritesStore),
+                favoritesStore: favoritesStore,
+                api: api),
             tabBarItemTitle: "ask")
 
         let showStoriesViewController = StoriesViewController(
             viewModel: StoriesViewModel(
                 storyQueryType: .show,
-                storyStore: storyStore,
                 storyImageInfoStore: storyImageInfoStore,
-                favoritesStore: favoritesStore),
+                favoritesStore: favoritesStore,
+                api: api),
             tabBarItemTitle: "show")
 
         let searchStoriesViewController = SearchViewController(
