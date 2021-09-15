@@ -138,7 +138,7 @@ class APIClient {
             }
             let html = String(decoding: data, as: UTF8.self)
             do {
-                let stories = try HNWebParser.parseTopStories(html)
+                let stories = try HNWebParser.parseForStories(html)
                 completionHandler(.success(stories))
             }
             catch {

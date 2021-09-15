@@ -25,7 +25,7 @@ private struct HNWebStory {
 
 final class HNWebParser {
 
-    static func parseTopStories(_ html: String) throws -> [Story] {
+    static func parseForStories(_ html: String) throws -> [Story] {
         var stories: [Story] = []
         do {
             guard let itemList = try SwiftSoup.parse(html).getElementsByClass("itemlist").first() else { return [] }
@@ -67,8 +67,8 @@ final class HNWebParser {
                 }
             }
         }
-        catch {
-            throw APIClientError.decodingError
+        catch(let error) {
+            throw error
         }
         return stories
     }
