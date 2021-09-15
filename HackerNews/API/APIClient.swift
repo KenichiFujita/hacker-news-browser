@@ -47,30 +47,6 @@ private enum API {
     }
 }
 
-struct HNURL {
-
-    private let host: String
-    private let path: String
-    private let queryItems: [URLQueryItem]?
-
-    var url: URL {
-        var urlComponents = URLComponents()
-        urlComponents.scheme = "https"
-        urlComponents.host = host
-        urlComponents.path = path
-        urlComponents.queryItems = queryItems
-        guard let url = urlComponents.url else { preconditionFailure() }
-        return url
-    }
-
-    static func stories(for type: StoryQueryType, queryItems: [URLQueryItem]? = nil) -> HNURL {
-        return HNURL(host: "news.ycombinator.com",
-                     path: type.path,
-                     queryItems: queryItems)
-    }
-
-}
-
 enum APIClientError: Error {
     case invalidURL
     case domainError
