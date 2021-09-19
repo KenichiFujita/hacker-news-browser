@@ -8,11 +8,35 @@
 
 import Foundation
 
-enum StoryQueryType: String {
+enum StoryQueryType {
     case top
     case ask
     case show
-    fileprivate var path: String {
+    case new
+    case job
+    case best
+    case active
+
+    fileprivate func url(with parameterValue: Int?) -> URL? {
+        var urlComponents = URLComponents(string: baseURL)
+        urlComponents?.path = path
+        urlComponents?.queryItems = queryItems
+        if let queryItem = query(value: parameterValue) {
+            urlComponents?.queryItems?.append(queryItem)
+        }
+        return urlComponents?.url
+    }
+
+    private var baseURL: String {
+        switch self {
+        case .top, .ask, .show, .best, .active:
+            return "https://news.ycombinator.com"
+        case .new, .job:
+            return "http://hn.algolia.com"
+        }
+    }
+
+    private var path: String {
         switch self {
         case .top:
             return "/news"
@@ -20,29 +44,66 @@ enum StoryQueryType: String {
             return "/ask"
         case .show:
             return "/show"
+        case .new, .job:
+            return "/api/v1/search_by_date"
+        case .best:
+            return "/best"
+        case .active:
+            return "/active"
         }
     }
+
+    private var parameterKey: String {
+        switch self {
+        case .top, .ask, .show, .best, .active:
+            return "p"
+        case .new, .job:
+            return "numericFilters"
+        }
+    }
+
+    private var tagValue: String? {
+        switch self {
+        case .new:
+            return "story"
+        case .job:
+            return "job"
+        default:
+            return nil
+        }
+    }
+
+    private var queryItems: [URLQueryItem] {
+        return [URLQueryItem(name: "tags", value: tagValue)]
+    }
+
+    private func query(value: Int?) -> URLQueryItem? {
+        var queryValue: String
+        switch self {
+        case .top, .ask, .show, .best, .active:
+            queryValue = ""
+        case .new, .job:
+            queryValue = "created_at_i<"
+        }
+        guard let value = value else { return nil }
+        return URLQueryItem(name: parameterKey, value: queryValue + "\(value)")
+    }
+
 }
 
 private enum API {
-    case getItem(Int)
-    case ids(StoryQueryType)
     case searchStories(String)
     case comment(Int)
-    case stories(StoryQueryType, Int)
+    case stories(StoryQueryType, Int?)
 
     fileprivate var url: URL? {
         switch self {
-        case .getItem(let id):
-            return URL(string: "https://hacker-news.firebaseio.com/v0/item/\(id).json")
-        case .ids(let queryType):
-            return URL(string: "https://hacker-news.firebaseio.com/v0/\(queryType.rawValue)stories.json")
         case .searchStories(let searchText):
             return URL(string: "http://hn.algolia.com/api/v1/search?query=\(searchText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&tags=story")
         case .comment(let id):
             return URL(string: "http://hn.algolia.com/api/v1/items/\(id)")
-        case .stories(let type, let page):
-            return URL(string: "https://news.ycombinator.com\(type.path)?p=\(page)")
+        case .stories(let type, let parameter):
+            return type.url(with: parameter)
         }
     }
 }
@@ -77,8 +138,9 @@ struct Story: Equatable, Identifiable {
         }
     }
     var info: String {
-        ["\(score) points", by, (age ?? date.postTimeAgo)].compactMap { $0 }.joined(separator: " · ")
+        ["\(score) points", by, (date.postTimeAgo)].compactMap { $0 }.joined(separator: " · ")
     }
+    let createdAt: Int?
 }
 
 enum StoryType: String {
@@ -122,12 +184,32 @@ class APIClient {
         self.session = session
     }
 
-    func stories(for type: StoryQueryType, page: Int, completionHandler: @escaping (Result<[Story], APIClientError>) -> Void) {
+    func stories(for type: StoryQueryType, page: Int?, completionHandler: @escaping (Result<[Story], APIClientError>) -> Void) {
         guard let url = API.stories(type, page).url else {
             completionHandler(.failure(.invalidURL))
             return
         }
-        session.dataTask(with: url) { data, response, error in
+        fetch(url: url) { [weak self] result in
+            guard let strongSelf = self else { return }
+            switch result {
+            case .success(let data):
+                do {
+                    completionHandler(.success(try strongSelf.convert(from: data, for: type)))
+                }
+                catch let error as APIClientError {
+                    completionHandler(.failure(error))
+                }
+                catch {
+                    completionHandler(.failure(.unknownError))
+                }
+            case .failure(let error):
+                completionHandler(.failure(error))
+            }
+        }.resume()
+    }
+
+    private func fetch(url: URL, completionHandler: @escaping (Result<Data, APIClientError>) -> Void) -> URLSessionDataTask {
+        return session.dataTask(with: url) { data, response, error in
             guard let data = data else {
                 if let _ = error {
                     completionHandler(.failure(.domainError))
@@ -136,15 +218,24 @@ class APIClient {
                 }
                 return
             }
-            let html = String(decoding: data, as: UTF8.self)
-            do {
-                let stories = try HNWebParser.parseForStories(html)
-                completionHandler(.success(stories))
+            completionHandler(.success(data))
+        }
+    }
+
+    private func convert(from data: Data, for type: StoryQueryType) throws -> [Story] {
+        switch type {
+        case .new, .job:
+            guard let hnsStoryResponse = try? JSONDecoder.hackerNewsSearch.decode(HNSStoryResponse.self, from: data) else {
+                throw APIClientError.decodingError
             }
-            catch {
-                completionHandler(.failure(.parsingError))
+            let hnsStories = hnsStoryResponse.hits.compactMap { $0 }
+            return hnsStories.compactMap { Story(hnsStory: $0) }
+        default:
+            guard let stories = try? HNWebParser.parseForStories(String(decoding: data, as: UTF8.self)) else {
+                throw APIClientError.parsingError
             }
-        }.resume()
+            return stories
+        }
     }
     
 }
@@ -159,9 +250,10 @@ private struct HNSStory: Decodable {
     public let url: String?
     public let by: String
     public let score: Int
-    public let descendants: Int
+    public let descendants: Int?
     public let id: String?
     public let text: String?
+    public let createdAt: Int?
     
     private enum CodingKeys: String, CodingKey {
         case date = "createdAt"
@@ -172,6 +264,7 @@ private struct HNSStory: Decodable {
         case descendants = "numComments"
         case id = "objectID"
         case text
+        case createdAt = "createdAtI"
     }
 }
 
@@ -283,13 +376,14 @@ extension APIClient {
 extension Story {
     fileprivate init(hnsStory: HNSStory) {
         self.by = hnsStory.by
-        self.descendants = hnsStory.descendants
+        self.descendants = hnsStory.descendants ?? 0
         self.id = Int(hnsStory.id ?? "0") ?? 0
         self.score = hnsStory.score
         self.date = hnsStory.date
         self.title = hnsStory.title
         self.url = hnsStory.url
         self.text = hnsStory.text
+        self.createdAt = hnsStory.createdAt
     }
 }
 

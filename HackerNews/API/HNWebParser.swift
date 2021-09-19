@@ -79,6 +79,7 @@ private extension DateFormatter {
     static func storyDate(from date: String) -> Date? {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        dateFormatter.timeZone = TimeZone(identifier: "UTC")
         return dateFormatter.date(from: date)
     }
 }
@@ -95,5 +96,6 @@ private extension Story {
         self.url = item.url
         self.text = item.text
         self.age = item.age
+        self.createdAt = Int(item.date.timeIntervalSince1970)
     }
 }

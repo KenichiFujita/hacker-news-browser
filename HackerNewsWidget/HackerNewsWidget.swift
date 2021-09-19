@@ -209,7 +209,8 @@ private extension Story {
                                                      date: Date(),
                                                      title: "DummyStory-----------------------------------------------------------------------------------------------------------------------------",
                                                      url: "https://dummy.hnb",
-                                                     text: nil)
+                                                     text: nil,
+                                                     createdAt: nil)
 }
 
 private extension String {

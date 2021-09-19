@@ -37,6 +37,14 @@ class HomeViewController: TabBarController {
                 api: api),
             tabBarItemTitle: "top")
 
+        let newStoriesViewController = StoriesViewController(
+            viewModel: ChronologicalStoriesViewModel(
+                storyQueryType: .new,
+                storyImageInfoStore: storyImageInfoStore,
+                favoritesStore: favoritesStore,
+                api: api),
+            tabBarItemTitle: "new")
+
         let askStoriesViewController = StoriesViewController(
             viewModel: StoriesViewModel(
                 storyQueryType: .ask,
@@ -53,23 +61,38 @@ class HomeViewController: TabBarController {
                 api: api),
             tabBarItemTitle: "show")
 
-        let searchStoriesViewController = SearchViewController(
-            viewModel: SearchViewModel(
+        let jobStoriesViewController = StoriesViewController(
+            viewModel: ChronologicalStoriesViewModel(
+                storyQueryType: .job,
+                storyImageInfoStore: storyImageInfoStore,
                 favoritesStore: favoritesStore,
                 api: api),
-            tabBarItemTitle: "search")
+            tabBarItemTitle: "job")
 
-        let favoritesStoriesViewController = StoriesViewController(
-            viewModel: FavoriteStoriesViewModel(
-                favoritesStore: favoritesStore),
-            tabBarItemTitle: "favorites")
+        let bestStoriesViewController = StoriesViewController(
+            viewModel: StoriesViewModel(
+                storyQueryType: .best,
+                storyImageInfoStore: storyImageInfoStore,
+                favoritesStore: favoritesStore,
+                api: api),
+            tabBarItemTitle: "best")
+
+        let activeStoriesViewController = StoriesViewController(
+            viewModel: StoriesViewModel(
+                storyQueryType: .active,
+                storyImageInfoStore: storyImageInfoStore,
+                favoritesStore: favoritesStore,
+                api: api),
+            tabBarItemTitle: "active")
         
         viewControllers = [
             topStoriesViewController,
+            newStoriesViewController,
             askStoriesViewController,
             showStoriesViewController,
-            searchStoriesViewController,
-            favoritesStoriesViewController
+            jobStoriesViewController,
+            bestStoriesViewController,
+            activeStoriesViewController
         ]
         
     }
