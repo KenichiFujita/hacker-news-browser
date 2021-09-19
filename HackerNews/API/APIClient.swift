@@ -18,22 +18,12 @@ enum StoryQueryType {
     case active
 
     fileprivate func url(with parameterValue: Int?) -> URL? {
-        var urlComponents = URLComponents(string: baseURL)
+        var urlComponents = URLComponents(string: "https://news.ycombinator.com")
         urlComponents?.path = path
-        urlComponents?.queryItems = queryItems
-        if let queryItem = query(value: parameterValue) {
-            urlComponents?.queryItems?.append(queryItem)
+        if let parameterValue = parameterValue {
+            urlComponents?.queryItems = [URLQueryItem(name: parameterKey, value: "\(parameterValue)")]
         }
         return urlComponents?.url
-    }
-
-    private var baseURL: String {
-        switch self {
-        case .top, .ask, .show, .best, .active:
-            return "https://news.ycombinator.com"
-        case .new, .job:
-            return "http://hn.algolia.com"
-        }
     }
 
     private var path: String {
@@ -44,8 +34,10 @@ enum StoryQueryType {
             return "/ask"
         case .show:
             return "/show"
-        case .new, .job:
-            return "/api/v1/search_by_date"
+        case .new:
+            return "/newest"
+        case .job:
+            return "/jobs"
         case .best:
             return "/best"
         case .active:
@@ -58,35 +50,8 @@ enum StoryQueryType {
         case .top, .ask, .show, .best, .active:
             return "p"
         case .new, .job:
-            return "numericFilters"
+            return "next"
         }
-    }
-
-    private var tagValue: String? {
-        switch self {
-        case .new:
-            return "story"
-        case .job:
-            return "job"
-        default:
-            return nil
-        }
-    }
-
-    private var queryItems: [URLQueryItem] {
-        return [URLQueryItem(name: "tags", value: tagValue)]
-    }
-
-    private func query(value: Int?) -> URLQueryItem? {
-        var queryValue: String
-        switch self {
-        case .top, .ask, .show, .best, .active:
-            queryValue = ""
-        case .new, .job:
-            queryValue = "created_at_i<"
-        }
-        guard let value = value else { return nil }
-        return URLQueryItem(name: parameterKey, value: queryValue + "\(value)")
     }
 
 }
@@ -94,7 +59,6 @@ enum StoryQueryType {
 private enum API {
     case searchStories(String)
     case comment(Int)
-    case stories(StoryQueryType, Int?)
 
     fileprivate var url: URL? {
         switch self {
@@ -102,8 +66,6 @@ private enum API {
             return URL(string: "http://hn.algolia.com/api/v1/search?query=\(searchText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&tags=story")
         case .comment(let id):
             return URL(string: "http://hn.algolia.com/api/v1/items/\(id)")
-        case .stories(let type, let parameter):
-            return type.url(with: parameter)
         }
     }
 }
@@ -185,31 +147,11 @@ class APIClient {
     }
 
     func stories(for type: StoryQueryType, page: Int?, completionHandler: @escaping (Result<[Story], APIClientError>) -> Void) {
-        guard let url = API.stories(type, page).url else {
+        guard let url = type.url(with: page) else {
             completionHandler(.failure(.invalidURL))
             return
         }
-        fetch(url: url) { [weak self] result in
-            guard let strongSelf = self else { return }
-            switch result {
-            case .success(let data):
-                do {
-                    completionHandler(.success(try strongSelf.convert(from: data, for: type)))
-                }
-                catch let error as APIClientError {
-                    completionHandler(.failure(error))
-                }
-                catch {
-                    completionHandler(.failure(.unknownError))
-                }
-            case .failure(let error):
-                completionHandler(.failure(error))
-            }
-        }.resume()
-    }
-
-    private func fetch(url: URL, completionHandler: @escaping (Result<Data, APIClientError>) -> Void) -> URLSessionDataTask {
-        return session.dataTask(with: url) { data, response, error in
+        session.dataTask(with: url) { data, response, error in
             guard let data = data else {
                 if let _ = error {
                     completionHandler(.failure(.domainError))
@@ -218,24 +160,12 @@ class APIClient {
                 }
                 return
             }
-            completionHandler(.success(data))
-        }
-    }
-
-    private func convert(from data: Data, for type: StoryQueryType) throws -> [Story] {
-        switch type {
-        case .new, .job:
-            guard let hnsStoryResponse = try? JSONDecoder.hackerNewsSearch.decode(HNSStoryResponse.self, from: data) else {
-                throw APIClientError.decodingError
-            }
-            let hnsStories = hnsStoryResponse.hits.compactMap { $0 }
-            return hnsStories.compactMap { Story(hnsStory: $0) }
-        default:
             guard let stories = try? HNWebParser.parseForStories(String(decoding: data, as: UTF8.self)) else {
-                throw APIClientError.parsingError
+                completionHandler(.failure(APIClientError.parsingError))
+                return
             }
-            return stories
-        }
+            completionHandler(.success(stories))
+        }.resume()
     }
     
 }

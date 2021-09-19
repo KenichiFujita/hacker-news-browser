@@ -134,7 +134,7 @@ extension StoriesViewModel: StoriesViewModelInputs {
 final class ChronologicalStoriesViewModel: StoriesViewModel {
 
     private var timeStamp: Int? {
-        return stories.last?.createdAt
+        return stories.last?.id
     }
 
     override func load() {
