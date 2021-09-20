@@ -14,6 +14,7 @@ class HomeViewController: TabBarController {
     private let favoritesStore: FavoritesStore
     private let storyImageInfoStore: StoryImageInfoStore
     private let api: APIClient
+    private var previousViewController: UIViewController?
 
     init(favoritesStore: FavoritesStore, storyImageInfoStore: StoryImageInfoStore, api: APIClient) {
         self.favoritesStore = favoritesStore
@@ -28,6 +29,8 @@ class HomeViewController: TabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        delegate = self
 
         let topStoriesViewController = StoriesViewController(
             viewModel: StoriesViewModel(
@@ -97,7 +100,19 @@ class HomeViewController: TabBarController {
         
     }
     
+}
 
 
+extension HomeViewController: TabBarControllerDelegate {
+
+    func tabBarController(_ tabBarController: TabBarController, didSelect viewController: UIViewController) {
+        guard viewController == previousViewController,
+              let storiesViewController = viewController as? StoriesViewController
+        else {
+            previousViewController = viewController
+            return
+        }
+        storiesViewController.scrollToTop()
+    }
 
 }

@@ -39,7 +39,7 @@ class StoriesViewController: UIViewController {
 
     override func loadView() {
         super.loadView()
-        
+
         view.addSubview(tableView)
         
         NSLayoutConstraint.activate([
@@ -99,6 +99,15 @@ class StoriesViewController: UIViewController {
     
     @objc func didPullToRefresh() {
         viewModel.inputs.didPullToRefresh()
+    }
+
+    func scrollToTop() {
+        guard tableView.numberOfSections > 0,
+              tableView.numberOfRows(inSection: 0) > 0
+        else {
+            return
+        }
+        tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
     }
 
 }
