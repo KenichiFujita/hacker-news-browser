@@ -104,9 +104,7 @@ class StoriesViewController: UIViewController {
     func scrollToTop() {
         guard tableView.numberOfSections > 0,
               tableView.numberOfRows(inSection: 0) > 0
-        else {
-            return
-        }
+        else { return }
         tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
     }
 

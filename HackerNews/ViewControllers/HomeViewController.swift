@@ -105,14 +105,9 @@ class HomeViewController: TabBarController {
 
 extension HomeViewController: TabBarControllerDelegate {
 
-    func tabBarController(_ tabBarController: TabBarController, didSelect viewController: UIViewController) {
-        guard viewController == previousViewController,
-              let storiesViewController = viewController as? StoriesViewController
-        else {
-            previousViewController = viewController
-            return
-        }
-        storiesViewController.scrollToTop()
+    func tabBarController(_ tabBarController: TabBarController, didTap viewController: UIViewController) {
+        guard viewController == selectedViewController else { return }
+        (viewController as? StoriesViewController)?.scrollToTop()
     }
 
 }
