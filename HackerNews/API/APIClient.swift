@@ -168,40 +168,37 @@ class APIClient {
         }.resume()
     }
 
-//    func logIn(userName: String, password: String, completionHandler: @escaping (Result<[Story], APIClientError>) -> Void) {
-//        guard let request = buildLogInRequest(userName: userName, password: password) else {
-//            completionHandler(.failure(.invalidURL))
-//            return
-//        }
-//        session.dataTask(with: request) { data, response, error in
-//            guard let data = data else {
-//                if let _ = error {
-//                    completionHandler(.failure(.domainError))
-//                } else {
-//                    completionHandler(.failure(.unknownError))
-//                }
-//                return
-//            }
-//            let html = String(decoding: data, as: UTF8.self)
-//            do {
-//                let stories = try HNWebParser.parseForStories(html)
-//                completionHandler(.success(stories))
-//            }
-//            catch {
-//                completionHandler(.failure(.parsingError))
-//            }
-//        }.resume()
-//
-//    }
-//
-//    private func buildLogInRequest(userName: String, password: String) -> URLRequest? {
-//        guard let url = API.logIn(userName, password).url else { return nil }
-//        var request = URLRequest(url: url)
-//        request.httpMethod = "POST"
-//        request.httpBody = "goto=favorites%3Fid%3D\(userName)&acct=\(userName)&pw=\(password)".data(using: .utf8)
-//        return request
-//    }
-    
+    func logIn(userName: String, password: String, completionHandler: @escaping (Result<[Story], APIClientError>) -> Void) {
+        guard let request = buildLogInRequest(userName: userName, password: password) else {
+            completionHandler(.failure(.invalidURL))
+            return
+        }
+        session.dataTask(with: request) { data, response, error in
+            guard let data = data else {
+                if let _ = error {
+                    completionHandler(.failure(.domainError))
+                } else {
+                    completionHandler(.failure(.unknownError))
+                }
+                return
+            }
+            do {
+                let stories = try HNWebParser.parseForStories(String(decoding: data, as: UTF8.self))
+                completionHandler(.success(stories))
+            } catch {
+                completionHandler(.failure(.parsingError))
+            }
+        }.resume()
+    }
+
+    private func buildLogInRequest(userName: String, password: String) -> URLRequest? {
+        guard let url = URL(string: "https://news.ycombinator.com/login") else { return nil }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = "goto=favorites%3Fid%3D\(userName)&acct=\(userName)&pw=\(password)".data(using: .utf8)
+        return request
+    }
+
 }
 
 private struct HNSStoryResponse: Decodable {

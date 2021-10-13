@@ -33,6 +33,10 @@
 		225E674A251BE6E0000D4AB0 /* StoryImageInfoDataWithoutOgImage.html in Resources */ = {isa = PBXBuildFile; fileRef = 225E6749251BE6E0000D4AB0 /* StoryImageInfoDataWithoutOgImage.html */; };
 		225E674B251BFD3B000D4AB0 /* StoryImageInfoData.html in Resources */ = {isa = PBXBuildFile; fileRef = 225E6747251BE588000D4AB0 /* StoryImageInfoData.html */; };
 		225E674C251BFD3B000D4AB0 /* StoryImageInfoDataWithoutOgImage.html in Resources */ = {isa = PBXBuildFile; fileRef = 225E6749251BE6E0000D4AB0 /* StoryImageInfoDataWithoutOgImage.html */; };
+		226DD76F26F9200200DC6D27 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226DD76E26F9200200DC6D27 /* LoginViewController.swift */; };
+		226DD77126F9780D00DC6D27 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226DD77026F9780D00DC6D27 /* LoginViewModel.swift */; };
+		226DD77526FED01600DC6D27 /* AccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226DD77426FED01600DC6D27 /* AccountViewController.swift */; };
+		226DD77826FF55E900DC6D27 /* AccountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226DD77726FF55E900DC6D27 /* AccountViewModel.swift */; };
 		227CF53323C57731000D2A52 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227CF53223C57731000D2A52 /* MainTabBarController.swift */; };
 		227CF53523CBC0C4000D2A52 /* StoryViewHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227CF53423CBC0C4000D2A52 /* StoryViewHeaderCell.swift */; };
 		227CF53823CD4524000D2A52 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 227CF53723CD4524000D2A52 /* Kingfisher */; };
@@ -58,6 +62,7 @@
 		229294C026E6900600570DA6 /* HNWebParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229294BF26E6900600570DA6 /* HNWebParser.swift */; };
 		229294C126E6A0B000570DA6 /* HNWebParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229294BF26E6900600570DA6 /* HNWebParser.swift */; };
 		229375B026D48FCB00734577 /* StoriesDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229375AF26D48FCB00734577 /* StoriesDataSource.swift */; };
+		22A02C4727166B53008E554C /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A02C4627166B53008E554C /* Account.swift */; };
 		22B074522528BE1300F1C42B /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B074512528BE1300F1C42B /* SearchViewModel.swift */; };
 		22CD276024228E5A006CF0C4 /* StoryImageInfoCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22CD275F24228E5A006CF0C4 /* StoryImageInfoCache.swift */; };
 		22D6A9B925ACFEEB00073C2E /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22D6A9B825ACFEEB00073C2E /* WidgetKit.framework */; };
@@ -142,6 +147,10 @@
 		225E67392515981E000D4AB0 /* StoryImageInfoStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryImageInfoStoreTests.swift; sourceTree = "<group>"; };
 		225E6747251BE588000D4AB0 /* StoryImageInfoData.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = StoryImageInfoData.html; sourceTree = "<group>"; };
 		225E6749251BE6E0000D4AB0 /* StoryImageInfoDataWithoutOgImage.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = StoryImageInfoDataWithoutOgImage.html; sourceTree = "<group>"; };
+		226DD76E26F9200200DC6D27 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		226DD77026F9780D00DC6D27 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		226DD77426FED01600DC6D27 /* AccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewController.swift; sourceTree = "<group>"; };
+		226DD77726FF55E900DC6D27 /* AccountViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewModel.swift; sourceTree = "<group>"; };
 		227CF53223C57731000D2A52 /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
 		227CF53423CBC0C4000D2A52 /* StoryViewHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryViewHeaderCell.swift; sourceTree = "<group>"; };
 		2281821D25B0264D00EE0CA1 /* URL+HN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+HN.swift"; sourceTree = "<group>"; };
@@ -162,6 +171,7 @@
 		2290BE5923CEB5F300FBA2D4 /* HTMLView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLView.swift; sourceTree = "<group>"; };
 		229294BF26E6900600570DA6 /* HNWebParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNWebParser.swift; sourceTree = "<group>"; };
 		229375AF26D48FCB00734577 /* StoriesDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoriesDataSource.swift; sourceTree = "<group>"; };
+		22A02C4627166B53008E554C /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
 		22B074512528BE1300F1C42B /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		22CD275F24228E5A006CF0C4 /* StoryImageInfoCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryImageInfoCache.swift; sourceTree = "<group>"; };
 		22D6A9B625ACFEEB00073C2E /* HackerNewsWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HackerNewsWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -241,10 +251,12 @@
 		221FD6612463584000BCE17E /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				227CF53223C57731000D2A52 /* MainTabBarController.swift */,
+				226DD77426FED01600DC6D27 /* AccountViewController.swift */,
 				2290551726D95D2B00F802DB /* HomeViewController.swift */,
-				228AA6F52381B0C600B4D512 /* StoriesViewController.swift */,
+				226DD76E26F9200200DC6D27 /* LoginViewController.swift */,
+				227CF53223C57731000D2A52 /* MainTabBarController.swift */,
 				22466EB0242987370012636F /* SearchViewController.swift */,
+				228AA6F52381B0C600B4D512 /* StoriesViewController.swift */,
 				2249FF2B2395E31B007FDCF2 /* StoryViewController.swift */,
 			);
 			path = ViewControllers;
@@ -253,9 +265,11 @@
 		221FD6622463586C00BCE17E /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				226DD77726FF55E900DC6D27 /* AccountViewModel.swift */,
 				223F3E4A23E9141900C2AE52 /* FavoriteStoriesViewModel.swift */,
-				223F3E4823E9140300C2AE52 /* StoriesViewModel.swift */,
+				226DD77026F9780D00DC6D27 /* LoginViewModel.swift */,
 				22B074512528BE1300F1C42B /* SearchViewModel.swift */,
+				223F3E4823E9140300C2AE52 /* StoriesViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -315,6 +329,7 @@
 		228AA6F02381B0C600B4D512 /* HackerNews */ = {
 			isa = PBXGroup;
 			children = (
+				22A02C482717622F008E554C /* Library */,
 				229375AE26D48F1E00734577 /* DataSources */,
 				221FD66D2465F3C900BCE17E /* Extension */,
 				221FD665246358D700BCE17E /* API */,
@@ -361,6 +376,14 @@
 				229375AF26D48FCB00734577 /* StoriesDataSource.swift */,
 			);
 			path = DataSources;
+			sourceTree = "<group>";
+		};
+		22A02C482717622F008E554C /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				22A02C4627166B53008E554C /* Account.swift */,
+			);
+			path = Library;
 			sourceTree = "<group>";
 		};
 		22D6A9B725ACFEEB00073C2E /* Frameworks */ = {
@@ -580,17 +603,22 @@
 				227CF53323C57731000D2A52 /* MainTabBarController.swift in Sources */,
 				223F3E4923E9140300C2AE52 /* StoriesViewModel.swift in Sources */,
 				228AA6F62381B0C600B4D512 /* StoriesViewController.swift in Sources */,
+				226DD77526FED01600DC6D27 /* AccountViewController.swift in Sources */,
+				22A02C4727166B53008E554C /* Account.swift in Sources */,
+				226DD77126F9780D00DC6D27 /* LoginViewModel.swift in Sources */,
 				22B074522528BE1300F1C42B /* SearchViewModel.swift in Sources */,
 				2249FF302398913A007FDCF2 /* CommentCell.swift in Sources */,
 				2290BE5A23CEB5F300FBA2D4 /* HTMLView.swift in Sources */,
 				2290551826D95D2B00F802DB /* HomeViewController.swift in Sources */,
 				22029D482387941C008CF290 /* StoryCell.swift in Sources */,
+				226DD76F26F9200200DC6D27 /* LoginViewController.swift in Sources */,
 				22CD276024228E5A006CF0C4 /* StoryImageInfoCache.swift in Sources */,
 				221F2AA923DCAA3B00A7C71C /* FavoritesStore.swift in Sources */,
 				221FD66F2465F3F000BCE17E /* UIFont+HN.swift in Sources */,
 				228AA6F22381B0C600B4D512 /* AppDelegate.swift in Sources */,
 				22D6A9C425ACFEEB00073C2E /* HackerNewsWidget.intentdefinition in Sources */,
 				229294C026E6900600570DA6 /* HNWebParser.swift in Sources */,
+				226DD77826FF55E900DC6D27 /* AccountViewModel.swift in Sources */,
 				22466EB1242987370012636F /* SearchViewController.swift in Sources */,
 				224122BC240E01B80096CF6B /* StoryImageInfoStore.swift in Sources */,
 				228AA6F42381B0C600B4D512 /* SceneDelegate.swift in Sources */,

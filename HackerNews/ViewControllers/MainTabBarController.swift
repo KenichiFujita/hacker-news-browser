@@ -32,9 +32,18 @@ class MainTabBarController: UITabBarController {
                 api: api)
         )
         homeNavigationController.tabBarItem.image = UIImage(systemName: "house")
+
+        let loginNavigationController = UINavigationController(
+            rootViewController: LoginViewController(
+                api: api,
+                favoritesStore: favoritesStore
+            )
+        )
+        loginNavigationController.tabBarItem.image = UIImage(systemName: "person")
         
         viewControllers = [
-            homeNavigationController
+            homeNavigationController,
+            loginNavigationController
         ]
         
     }
