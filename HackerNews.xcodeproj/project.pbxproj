@@ -63,6 +63,7 @@
 		229294C126E6A0B000570DA6 /* HNWebParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229294BF26E6900600570DA6 /* HNWebParser.swift */; };
 		229375B026D48FCB00734577 /* StoriesDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229375AF26D48FCB00734577 /* StoriesDataSource.swift */; };
 		22A02C4727166B53008E554C /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A02C4627166B53008E554C /* Account.swift */; };
+		22A5141D271B572D00EA7A9B /* UIColor+HN.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A5141C271B572D00EA7A9B /* UIColor+HN.swift */; };
 		22B074522528BE1300F1C42B /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B074512528BE1300F1C42B /* SearchViewModel.swift */; };
 		22CD276024228E5A006CF0C4 /* StoryImageInfoCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22CD275F24228E5A006CF0C4 /* StoryImageInfoCache.swift */; };
 		22D6A9B925ACFEEB00073C2E /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22D6A9B825ACFEEB00073C2E /* WidgetKit.framework */; };
@@ -172,6 +173,7 @@
 		229294BF26E6900600570DA6 /* HNWebParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNWebParser.swift; sourceTree = "<group>"; };
 		229375AF26D48FCB00734577 /* StoriesDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoriesDataSource.swift; sourceTree = "<group>"; };
 		22A02C4627166B53008E554C /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
+		22A5141C271B572D00EA7A9B /* UIColor+HN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+HN.swift"; sourceTree = "<group>"; };
 		22B074512528BE1300F1C42B /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		22CD275F24228E5A006CF0C4 /* StoryImageInfoCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryImageInfoCache.swift; sourceTree = "<group>"; };
 		22D6A9B625ACFEEB00073C2E /* HackerNewsWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HackerNewsWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -299,6 +301,7 @@
 				221FD66E2465F3F000BCE17E /* UIFont+HN.swift */,
 				221FD6702465F43A00BCE17E /* Date+HN.swift */,
 				2281821D25B0264D00EE0CA1 /* URL+HN.swift */,
+				22A5141C271B572D00EA7A9B /* UIColor+HN.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -610,6 +613,7 @@
 				2249FF302398913A007FDCF2 /* CommentCell.swift in Sources */,
 				2290BE5A23CEB5F300FBA2D4 /* HTMLView.swift in Sources */,
 				2290551826D95D2B00F802DB /* HomeViewController.swift in Sources */,
+				22A5141D271B572D00EA7A9B /* UIColor+HN.swift in Sources */,
 				22029D482387941C008CF290 /* StoryCell.swift in Sources */,
 				226DD76F26F9200200DC6D27 /* LoginViewController.swift in Sources */,
 				22CD276024228E5A006CF0C4 /* StoryImageInfoCache.swift in Sources */,
