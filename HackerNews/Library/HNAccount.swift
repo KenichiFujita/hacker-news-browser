@@ -8,7 +8,14 @@
 
 import Foundation
 
-struct Account {
+public struct HNAccount {
+    static var loginUrl: URL {
+        guard let url = URL(string: "https://news.ycombinator.com/login") else {
+            fatalError("Invalid login URL")
+        }
+        return url
+    }
+    
     static var isLoggedIn: Bool {
         guard
             let url = URL(string: "https://news.ycombinator.com/login"),

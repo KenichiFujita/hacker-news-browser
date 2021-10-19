@@ -8,17 +8,10 @@
 
 import UIKit
 
-class LoginViewController: UIViewController {
+final class LoginViewController: UIViewController {
 
     private let viewModel: LoginViewModelType
-
-    private lazy var tapGestureRecognizer: UITapGestureRecognizer = {
-        let tapGestureRecognizer = UITapGestureRecognizer(
-            target: self,
-            action: #selector(didTapView)
-        )
-        return tapGestureRecognizer
-    }()
+    private let tapGestureRecognizer = UITapGestureRecognizer()
 
     private let welcomeLabel: UILabel = {
         let label = UILabel()
@@ -140,15 +133,10 @@ class LoginViewController: UIViewController {
         return textView
     }()
 
-    private lazy var loginButton: LoginButton = {
+    private let loginButton: LoginButton = {
         let button = LoginButton(backgroundColor: .systemOrange)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Sign in", for: .normal)
-        button.addTarget(
-            self,
-            action: #selector(didTapLoginButton),
-            for: .touchUpInside
-        )
         button.clipsToBounds = true
         button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .title3).bold()
         button.isEnabled = false
@@ -241,6 +229,8 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        loginButton.addTarget(self, action: #selector(didTapLoginButton), for: .touchUpInside)
+        tapGestureRecognizer.addTarget(self, action: #selector(didTapView))
         view.backgroundColor = .systemBackground
         view.addGestureRecognizer(tapGestureRecognizer)
         usernameTextField.delegate = self
@@ -319,11 +309,13 @@ class LoginViewController: UIViewController {
 
     }
 
-    @objc private func didTapView() {
+    @objc
+    private func didTapView() {
         view.endEditing(true)
     }
 
-    @objc private func textFieldDidChange(_ textField: UITextField) {
+    @objc
+    private func textFieldDidChange(_ textField: UITextField) {
         guard
             let userIDText = usernameTextField.text,
             let passwordText = passwordTextField.text
@@ -331,7 +323,8 @@ class LoginViewController: UIViewController {
         viewModel.inputs.textFieldDidChange(userIDText: userIDText, passwordText: passwordText)
     }
 
-    @objc private func didTapLoginButton() {
+    @objc
+    private func didTapLoginButton() {
         view.endEditing(true)
         guard
             let userName = usernameTextField.text,
