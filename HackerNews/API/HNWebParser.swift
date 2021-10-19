@@ -38,7 +38,7 @@ final class HNWebParser {
                     try athings[i].children().forEach { element in
                         if element.hasClass("title") {
                             try element.children().forEach { child in
-                                if child.hasClass("storylink") {
+                                if child.hasClass("titlelink") {
                                     hnWebStory.title = try child.select("a").text()
                                     hnWebStory.url = try child.select("a").attr("href")
                                 }
