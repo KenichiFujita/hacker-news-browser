@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AccountViewController: UIViewController {
+final class AccountViewController: UIViewController {
 
     private let viewModel: AccountViewModelType
 
@@ -48,7 +48,7 @@ class AccountViewController: UIViewController {
         navigationController?.setNavigationBarHidden(false, animated: true)
     }
 
-    func bind() {
+    private func bind() {
 
         viewModel.outputs.loggedOut = { [weak self] in
             self?.navigationController?.popViewController(animated: true)
@@ -60,7 +60,8 @@ class AccountViewController: UIViewController {
 
     }
 
-    @objc private func didTapSignOutButton() {
+    @objc
+    private func didTapSignOutButton() {
         viewModel.inputs.didTapSignOutButton()
     }
     

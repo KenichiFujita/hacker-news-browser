@@ -45,7 +45,7 @@ class LoginViewModel: LoginViewModelType, LoginViewModelInputs, LoginViewModelOu
     }
 
     func viewDidLoad() {
-        if Account.isLoggedIn {
+        if HNAccount.isLoggedIn {
             loggedIn()
         }
     }
@@ -64,18 +64,7 @@ class LoginViewModel: LoginViewModelType, LoginViewModelInputs, LoginViewModelOu
     var invalidUsernameSent: (String) -> Void = { _ in }
     var didReceiveError: (Error) -> Void = { _ in }
     func didTapLoginButton(userName: String, password: String) {
-        var usernameTextErrorMessage: String?
-        if userName.count < 2 || userName.count > 15 {
-            usernameTextErrorMessage = InvalidUsernameDescription.invalidLength
-        }
-        if !isValidCharactersForUsername(username: userName) {
-            if usernameTextErrorMessage == nil {
-                usernameTextErrorMessage = InvalidUsernameDescription.containsInvalidCharacter
-            } else {
-                usernameTextErrorMessage?.append(contentsOf: "\n\(InvalidUsernameDescription.containsInvalidCharacter)")
-            }
-        }
-        if let usernameTextErrorMessage = usernameTextErrorMessage {
+        if let usernameTextErrorMessage = usernameTextErrorMessage(for: userName) {
             invalidUsernameSent(usernameTextErrorMessage)
             return
         }
@@ -83,7 +72,7 @@ class LoginViewModel: LoginViewModelType, LoginViewModelInputs, LoginViewModelOu
             DispatchQueue.main.async {
                 switch result {
                 case .success(_):
-                    if Account.isLoggedIn {
+                    if HNAccount.isLoggedIn {
                         #warning("stories not handled")
                         // TODO: Add favorite stories to FavoritesStore
                         self?.loggedIn()
@@ -97,13 +86,27 @@ class LoginViewModel: LoginViewModelType, LoginViewModelInputs, LoginViewModelOu
         }
     }
 
+    private func usernameTextErrorMessage(for userName: String) -> String? {
+        var usernameTextErrorMessage: String?
+        if userName.count < 2 || userName.count > 15 {
+            usernameTextErrorMessage = InvalidUsernameDescription.invalidLength
+        }
+        if !isValidCharactersForUsername(username: userName) {
+            if usernameTextErrorMessage == nil {
+                usernameTextErrorMessage = InvalidUsernameDescription.containsInvalidCharacter
+            } else {
+                usernameTextErrorMessage?.append(contentsOf: "\n\(InvalidUsernameDescription.containsInvalidCharacter)")
+            }
+        }
+        return usernameTextErrorMessage
+    }
+
     private func isValidCharactersForUsername(username: String) -> Bool {
         let validCharacters = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_")
         return username.rangeOfCharacter(from: validCharacters.inverted) == nil ? true : false
     }
 
     private struct InvalidUsernameDescription {
-//        static let tooLongAndInvalidCharacter = "Too long username\nPlease use only letters, digits, dashes and underscore"
         static let invalidLength = "Username must be 2-15 characters long"
         static let containsInvalidCharacter = "Please use only letters, digits, dashes and underscore"
     }

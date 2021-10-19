@@ -39,16 +39,13 @@ final class AccountViewModel: AccountViewModelType, AccountViewModelInputs, Acco
     func viewDidLoad() {}
 
     func didTapSignOutButton() {
-        guard
-            let url = URL(string: "https://news.ycombinator.com/login"),
-            let cookies = HTTPCookieStorage.shared.cookies(for: url)
-        else { return }
-        for cookie in cookies {
+        guard let cookies = HTTPCookieStorage.shared.cookies(for: HNAccount.loginUrl) else { return }
+        cookies.forEach { cookie in
             if cookie.name == "user" {
                 HTTPCookieStorage.shared.deleteCookie(cookie)
             }
         }
-        if Account.isLoggedIn {
+        if HNAccount.isLoggedIn {
             logoutFailed()
         } else {
             loggedOut()
